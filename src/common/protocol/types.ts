@@ -1,0 +1,12 @@
+export enum MessageType {
+  FETCH = "FETCH",
+  PUBLISH = "PUBLISH",
+  DISCOVER = "DISCOVER",
+  LOGIN = "LOGIN",
+  REGISTER = "REGISTER",
+  LOOKUP = "LOOKUP",
+  CONNECT = "CONNECT",
+  SELECT = "SELECT",
+  PING = "PING",
+  PLS_CONNECT = "PLS-CONNECT"
+}
