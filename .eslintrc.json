@@ -1,0 +1,14 @@
+{
+  "root": true,
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "rules": {
+
+  },
+  "ignorePatterns": [
+    "node_modules",
+    "build/**/*"
+  ]
+}
