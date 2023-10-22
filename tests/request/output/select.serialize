@@ -1,0 +1,10 @@
+{
+  "value": {
+    "type": "SELECT",
+    "headers": {
+      "hostname": "huydna.com",
+      "token": "123456789"
+    },
+    "body": "       \r\n        \r\n        "
+  }
+}
