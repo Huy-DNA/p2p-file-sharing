@@ -1,10 +1,10 @@
-import { None, Some } from "common/option/option.js";
+import { None, Option, Some } from "../option/option.js";
 import { MessageType } from "./types.js";
 
 export interface Response {
   type: MessageType;
   status: unknown;
-  headers?: { [index: string]: unknown; };
+  headers?: { [index: string]: string; };
   body?: unknown;
 }
 

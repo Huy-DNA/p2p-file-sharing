@@ -3,7 +3,7 @@ import { MessageType } from "./types.js";
 
 export interface Request {
   type: MessageType;
-  headers?: { [index: string]: unknown; };
+  headers?: { [index: string]: string; };
   body?: unknown;
 }
 
@@ -34,7 +34,7 @@ export interface LoginRequest extends Request {
     name: string;
     password: string;
     ip: string;
-    port: number;
+    port: string;
   };
 }
 
@@ -72,7 +72,7 @@ export interface PlsConnectRequest extends Request {
   type: MessageType.PLSCONNECT;
   headers: {
     ip: string;
-    port: number;
+    port: string;
   };
 }
 
