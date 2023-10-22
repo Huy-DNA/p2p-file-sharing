@@ -69,7 +69,7 @@ export interface PingRequest extends Request {
 }
 
 export interface PlsConnectRequest extends Request {
-  type: MessageType.PLS_CONNECT;
+  type: MessageType.PLSCONNECT;
   headers: {
     ip: string;
     port: number;
@@ -77,7 +77,7 @@ export interface PlsConnectRequest extends Request {
 }
 
 export function validateRequest(req: Request): boolean {
-  return req.headers === undefined || Object.values(req.headers).every((v) => ['number', 'string'].includes(typeof v));
+  return req.headers === undefined || Object.values(req.headers).every((v) => typeof v === 'number' || typeof v === 'string' && v.indexOf(' ') === -1);
 }
 
 export function serializeRequest(req: Request): string {
@@ -99,9 +99,9 @@ export function serializeRequest(req: Request): string {
 export function deserializeRequest(req: string): Option<Request> {
   const lines = req.split('\r\n');
 
-  const requestLine = lines.shift()?.trim();
-
-  if (requestLine?.split(/\s+/).length !== 1 || !Object.keys(MessageType).includes(requestLine.trim().toUpperCase())) {
+  const requestLine = lines.shift()?.trim().toUpperCase();
+  
+  if (requestLine?.split(/\s+/).length !== 1 || !Object.keys(MessageType).includes(requestLine)) {
     return new None();
   }
 
@@ -114,7 +114,7 @@ export function deserializeRequest(req: string): Option<Request> {
   while (lines.length > 0 && lines[0].trim() !== '') {
     const headerLine = lines.shift()!.trim();
     const [name, ...values] = headerLine.split(':');
-    result.headers![name] = values.join(':');
+    result.headers![name.toLowerCase()] = values.join(':').trim();
   }
 
   lines.shift();

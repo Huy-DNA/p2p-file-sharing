@@ -8,5 +8,5 @@ export enum MessageType {
   CONNECT = "CONNECT",
   SELECT = "SELECT",
   PING = "PING",
-  PLS_CONNECT = "PLS-CONNECT"
+  PLSCONNECT = "PLSCONNECT"
 }

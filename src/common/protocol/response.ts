@@ -109,12 +109,12 @@ export enum PlsConnectStatus {
 }
 
 export interface PlsConnectResponse extends Response {
-  type: MessageType.PLS_CONNECT;
+  type: MessageType.PLSCONNECT;
   status: PlsConnectStatus;
 }
 
 export function validateResponse(res: Response): boolean {
-  return res.headers === undefined || Object.values(res.headers).every((v) => ['number', 'string'].includes(typeof v));
+  return res.headers === undefined || Object.values(res.headers).every((v) => typeof v === 'string' && v.indexOf(' ') === -1 || typeof v === 'number');
 }
 
 export function serializeResponse(res: Response): string {
@@ -161,7 +161,7 @@ export function deserializeResponse(res: string): Option<Response> {
   while (lines.length > 0 && lines[0].trim() !== '') {
     const headerLine = lines.shift()!.trim();
     const [name, ...values] = headerLine.split(':');
-    result.headers![name] = values.join(':');
+    result.headers![name.toLowerCase()] = values.join(':').trim();
   }
 
   lines.shift();
