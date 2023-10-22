@@ -1,4 +1,4 @@
-import { None } from "common/option/option.js";
+import { None, Some } from "common/option/option.js";
 import { MessageType } from "./types.js";
 
 export interface Response {
@@ -136,7 +136,7 @@ export function serializeResponse(res: Response): string {
 export function deserializeResponse(res: string): Option<Response> {
   const lines = res.split('\r\n');
 
-  const statusLine = lines.shift();
+  const statusLine = lines.shift()?.trim();
 
   if (statusLine?.split(/\s+/).length !== 2) {
     return new None();
@@ -159,7 +159,7 @@ export function deserializeResponse(res: string): Option<Response> {
   };
 
   while (lines.length > 0 && lines[0].trim() !== '') {
-    const headerLine = lines.shift()!;
+    const headerLine = lines.shift()!.trim();
     const [name, ...values] = headerLine.split(':');
     result.headers![name] = values.join(':');
   }
@@ -172,5 +172,5 @@ export function deserializeResponse(res: string): Option<Response> {
     result.body = body;
   }
 
-  return result;
+  return new Some(result);
 }
