@@ -1,4 +1,4 @@
 build
 node_modules
 dist
-babel.config.js
+babel.config.cjs
