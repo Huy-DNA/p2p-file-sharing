@@ -1,3 +1,4 @@
+import { None } from "common/option/option.js";
 import { MessageType } from "./types.js";
 
 export interface Request {
@@ -71,6 +72,58 @@ export interface PlsConnectRequest extends Request {
   type: MessageType.PLS_CONNECT;
   headers: {
     ip: string;
-    port: string;
+    port: number;
   };
+}
+
+export function validateRequest(req: Request): boolean {
+  return req.headers === undefined || Object.values(req.headers).every((v) => ['number', 'string'].includes(typeof v));
+}
+
+export function serializeRequest(req: Request): string {
+  let result = '';
+
+  result += req.type + '\r\n';
+  
+  if (req.headers) {
+    result += Object.entries(req.headers).map((name, value) => `${name}: ${value}`).join('\r\n');
+  }
+
+  result += '\r\n\r\n';
+
+  result += JSON.stringify(req.body);
+
+  return result;
+}
+
+export function deserializeRequest(req: string): Option<Request> {
+  const lines = req.split('\r\n');
+
+  const requestLine = lines.shift();
+
+  if (requestLine?.split(/\s+/).length !== 1 || !Object.keys(MessageType).includes(requestLine.trim().toUpperCase())) {
+    return new None();
+  }
+
+  const result: Request = {
+    type: requestLine.trim().toUpperCase() as MessageType,
+    headers: {},
+    body: undefined,
+  };
+
+  while (lines.length > 0 && lines[0].trim() !== '') {
+    const headerLine = lines.shift()!;
+    const [name, ...values] = headerLine.split(':');
+    result.headers![name] = values.join(':');
+  }
+
+  lines.shift();
+  const body = lines.join('\r\n');
+  try {
+    result.body = JSON.parse(body);
+  } catch (e) {
+    result.body = body;
+  }
+
+  return result;
 }

@@ -1,3 +1,4 @@
+import { None } from "common/option/option.js";
 import { MessageType } from "./types.js";
 
 export interface Response {
@@ -110,4 +111,66 @@ export enum PlsConnectStatus {
 export interface PlsConnectResponse extends Response {
   type: MessageType.PLS_CONNECT;
   status: PlsConnectStatus;
+}
+
+export function validateResponse(res: Response): boolean {
+  return res.headers === undefined || Object.values(res.headers).every((v) => ['number', 'string'].includes(typeof v));
+}
+
+export function serializeResponse(res: Response): string {
+  let result = '';
+
+  result += `${res.type} ${res.status}\r\n`;
+  
+  if (res.headers) {
+    result += Object.entries(res.headers).map((name, value) => `${name}: ${value}`).join('\r\n');
+  }
+
+  result += '\r\n\r\n';
+
+  result += JSON.stringify(res.body);
+
+  return result;
+}
+
+export function deserializeResponse(res: string): Option<Response> {
+  const lines = res.split('\r\n');
+
+  const statusLine = lines.shift();
+
+  if (statusLine?.split(/\s+/).length !== 2) {
+    return new None();
+  }
+
+  const [type, status] = statusLine.split(/\s+/);
+  if (Number.isNaN(Number.parseInt(status, 10))) {
+    return new None();
+  }
+
+  if (!Object.keys(MessageType).includes(type.trim().toUpperCase())) {
+    return new None();
+  }
+
+  const result: Response = {
+    type: type.trim().toUpperCase() as MessageType,
+    status: Number.parseInt(status, 10),
+    headers: {},
+    body: undefined,
+  };
+
+  while (lines.length > 0 && lines[0].trim() !== '') {
+    const headerLine = lines.shift()!;
+    const [name, ...values] = headerLine.split(':');
+    result.headers![name] = values.join(':');
+  }
+
+  lines.shift();
+  const body = lines.join('\r\n');
+  try {
+    result.body = JSON.parse(body);
+  } catch (e) {
+    result.body = body;
+  }
+
+  return result;
 }
