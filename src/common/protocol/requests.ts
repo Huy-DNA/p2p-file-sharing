@@ -1,4 +1,4 @@
-import { None } from "common/option/option.js";
+import { None, Option, Some } from "../option/option.js";
 import { MessageType } from "./types.js";
 
 export interface Request {
@@ -99,7 +99,7 @@ export function serializeRequest(req: Request): string {
 export function deserializeRequest(req: string): Option<Request> {
   const lines = req.split('\r\n');
 
-  const requestLine = lines.shift();
+  const requestLine = lines.shift()?.trim();
 
   if (requestLine?.split(/\s+/).length !== 1 || !Object.keys(MessageType).includes(requestLine.trim().toUpperCase())) {
     return new None();
@@ -112,7 +112,7 @@ export function deserializeRequest(req: string): Option<Request> {
   };
 
   while (lines.length > 0 && lines[0].trim() !== '') {
-    const headerLine = lines.shift()!;
+    const headerLine = lines.shift()!.trim();
     const [name, ...values] = headerLine.split(':');
     result.headers![name] = values.join(':');
   }
@@ -125,5 +125,5 @@ export function deserializeRequest(req: string): Option<Request> {
     result.body = body;
   }
 
-  return result;
+  return new Some(result);
 }
