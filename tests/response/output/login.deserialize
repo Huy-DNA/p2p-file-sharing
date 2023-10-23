@@ -1,0 +1,8 @@
+{
+  "type": "LOGIN",
+  "status": 200,
+  "headers": {
+    "token": "12345678abc"
+  },
+  "body": ""
+}

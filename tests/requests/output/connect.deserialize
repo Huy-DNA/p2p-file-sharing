@@ -1,0 +1,7 @@
+{
+  "type": "CONNECT",
+  "headers": {
+    "connect-token": "12345bcace"
+  },
+  "body": ""
+}

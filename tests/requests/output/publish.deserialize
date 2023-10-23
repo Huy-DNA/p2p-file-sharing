@@ -1,0 +1,7 @@
+{
+  "type": "PUBLISH",
+  "headers": {
+    "token": "1234567"
+  },
+  "body": ""
+}

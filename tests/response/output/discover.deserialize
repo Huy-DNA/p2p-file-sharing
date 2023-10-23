@@ -1,0 +1,9 @@
+{
+  "type": "DISCOVER",
+  "status": 200,
+  "headers": {},
+  "body": [
+    "huydna.com",
+    "abc.xyz"
+  ]
+}

@@ -128,7 +128,7 @@ export function extractPingResponse(re: Response): Option<PingResponse> {
 }
 
 const plsConnectSchema = Joi.object({
-  type: Joi.string().trim().regex(/login/i).uppercase(),
+  type: Joi.string().trim().regex(/plsconnect/i).uppercase(),
   status: Joi.number().integer().sign('positive'),
   headers: Joi.object().optional(),
   body: Joi.string().trim().allow("").regex(/\s?/).optional(),
