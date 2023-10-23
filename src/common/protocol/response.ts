@@ -4,7 +4,7 @@ import { MessageType } from "./types.js";
 export interface Response {
   type: MessageType;
   status: unknown;
-  headers?: { [index: string]: string; };
+  headers?: { [index: string]: unknown; };
   body?: unknown;
 }
 
@@ -82,6 +82,16 @@ export interface LookupResponse extends Response {
   }[];
 }
 
+export enum ConnectStatus {
+  OK = 200,
+  BAD_REQUEST = 400,
+}
+
+export interface ConnectResponse extends Response {
+  type: MessageType.CONNECT;
+  status: ConnectStatus,
+}
+
 export enum SelectStatus {
   OK = 200,
   TIMEOUT = 408,
@@ -120,10 +130,10 @@ export function validateResponse(res: Response): boolean {
 export function serializeResponse(res: Response): string {
   let result = '';
 
-  result += `${res.type} ${res.status}\r\n`;
+  result += `re:${res.type} ${res.status}\r\n`;
   
   if (res.headers) {
-    result += Object.entries(res.headers).map((name, value) => `${name}: ${value}`).join('\r\n');
+    result += Object.entries(res.headers).map(([name, value]) => `${name}: ${value}`).join('\r\n');
   }
 
   result += '\r\n\r\n';
@@ -137,6 +147,10 @@ export function deserializeResponse(res: string): Option<Response> {
   const lines = res.split('\r\n');
 
   const statusLine = lines.shift()?.trim();
+  
+  if (!statusLine?.slice(0, 3).match(/re:/i)) {
+    return new None();
+  }
 
   if (statusLine?.split(/\s+/).length !== 2) {
     return new None();

@@ -3,7 +3,7 @@ import { MessageType } from "./types.js";
 
 export interface Request {
   type: MessageType;
-  headers?: { [index: string]: string; };
+  headers?: { [index: string]: unknown; };
   body?: unknown;
 }
 
@@ -34,7 +34,7 @@ export interface LoginRequest extends Request {
     name: string;
     password: string;
     ip: string;
-    port: string;
+    port: number;
   };
 }
 
@@ -61,6 +61,7 @@ export interface SelectRequest extends Request {
   type: MessageType.SELECT;
   headers: {
     token: string;
+    hostname: string;
   };
 }
 
@@ -72,7 +73,7 @@ export interface PlsConnectRequest extends Request {
   type: MessageType.PLSCONNECT;
   headers: {
     ip: string;
-    port: string;
+    port: number;
   };
 }
 
@@ -86,12 +87,12 @@ export function serializeRequest(req: Request): string {
   result += req.type + '\r\n';
   
   if (req.headers) {
-    result += Object.entries(req.headers).map((name, value) => `${name}: ${value}`).join('\r\n');
+    result += Object.entries(req.headers).map(([name, value]) => `${name}: ${value}`).join('\r\n');
   }
 
   result += '\r\n\r\n';
 
-  result += JSON.stringify(req.body);
+  result += typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
 
   return result;
 }
