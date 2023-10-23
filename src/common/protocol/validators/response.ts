@@ -5,7 +5,8 @@ import { Response, DiscoverResponse, FetchResponse, LoginResponse, PingResponse,
 const fetchSchema = Joi.object({
   type: Joi.string().trim().regex(/fetch/i).uppercase(),
   status: Joi.number().integer().sign('positive'),
-  body: Joi.string(),
+  headers: Joi.object().optional(),
+  body: Joi.string().optional(),
 });
 
 export function extractFetchResponse(re: Response): Option<FetchResponse> {
@@ -17,6 +18,7 @@ export function extractFetchResponse(re: Response): Option<FetchResponse> {
 const publishSchema = Joi.object({
   type: Joi.string().trim().regex(/publish/i).uppercase(),
   status: Joi.number().integer().sign('positive'),
+  headers: Joi.object().optional(),
   body: Joi.string().trim().allow("").regex(/\s?/).optional(),
 });
 
@@ -29,9 +31,10 @@ export function extractPublishResponse(re: Response): Option<PublishResponse> {
 const discoverSchema = Joi.object({
   type: Joi.string().trim().regex(/discover/i).uppercase(),
   status: Joi.number().integer().sign('positive'),
+  headers: Joi.object().optional(),
   body: Joi.object({
     hostnames: Joi.array().items(Joi.string().trim().hostname()),
-  }),
+  }).optional(),
 });
 
 export function extractDiscoverResponse(re: Response): Option<DiscoverResponse> {
@@ -43,6 +46,9 @@ export function extractDiscoverResponse(re: Response): Option<DiscoverResponse> 
 const loginSchema = Joi.object({
   type: Joi.string().trim().regex(/login/i).uppercase(),
   status: Joi.number().integer().sign('positive'), 
+  headers: Joi.object({
+    token: Joi.string().token(),
+  }).optional(),
   body: Joi.string().trim().allow("").regex(/\s?/).optional(),
 });
 
@@ -55,6 +61,7 @@ export function extractLoginResponse(re: Response): Option<LoginResponse> {
 const registerSchema = Joi.object({
   type: Joi.string().trim().regex(/register/i).uppercase(),
   status: Joi.number().integer().sign('positive'),
+  headers: Joi.object().optional(),
   body: Joi.string().trim().allow("").regex(/\s?/).optional(),
 });
 
@@ -67,12 +74,14 @@ export function extractRegisterResponse(re: Response): Option<RegisterResponse> 
 const lookupSchema = Joi.object({
   type: Joi.string().trim().regex(/lookup/i).uppercase(),
   status: Joi.number().integer().sign('positive'), 
+  headers: Joi.object().optional(),
   body: Joi.array().items(
     Joi.object({
+      hostname: Joi.string().trim().hostname(),
       ip: Joi.string().trim().ip(),
       port: Joi.number(),
     }),
-  ),
+  ).optional(),
 });
 
 export function extractLookupResponse(re: Response): Option<LookupResponse> {

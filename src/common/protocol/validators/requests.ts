@@ -92,7 +92,9 @@ export function extractLookupRequest(req: Request): Option<LookupRequest> {
 
 const connectSchema = Joi.object({
   type: Joi.string().trim().regex(/connect/i).uppercase(),
-  headers: Joi.object().optional(),
+  headers: Joi.object({
+    'connect-token': Joi.string().trim().token(),
+  }).optional(),
   body: Joi.string().trim().allow("").regex(/\s?/).optional(),
 });
 
@@ -105,6 +107,7 @@ export function extractConnectRequest(req: Request): Option<ConnectRequest> {
 const selectSchema = Joi.object({
   type: Joi.string().trim().regex(/select/i).uppercase(),
   headers: Joi.object({
+    'connect-token': Joi.string().trim().token(),
     token: Joi.string().trim().token(),
     hostname: Joi.string().trim().hostname(),
   }),
@@ -132,6 +135,7 @@ export function extractPingRequest(req: Request): Option<PingRequest> {
 const plsConnectSchema = Joi.object({
   type: Joi.string().trim().regex(/plsconnect/i).uppercase(),
   headers: Joi.object({
+    'connect-token': Joi.string().trim().token(),
     ip: Joi.string().ip(),
     port: Joi.number().port(),
   }),

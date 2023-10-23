@@ -17,7 +17,7 @@ export enum FetchStatus {
 export interface FetchResponse extends Response {
   type: MessageType.FETCH;
   status: FetchStatus;
-  body: string;
+  body?: string;
 }
 
 export enum PublishStatus {
@@ -41,7 +41,7 @@ export enum DiscoverStatus {
 export interface DiscoverResponse extends Response {
   type: MessageType.DISCOVER;
   status: DiscoverStatus;
-  body: {
+  body?: {
     hostnames: string[];
   };
 }
@@ -55,6 +55,9 @@ export enum LoginStatus {
 export interface LoginResponse extends Response {
   type: MessageType.LOGIN;
   status: LoginStatus;
+  headers: {
+    token?: string;
+  }
 }
 
 export enum RegisterStatus {
@@ -76,7 +79,8 @@ export enum LookupStatus {
 export interface LookupResponse extends Response {
   type: MessageType.LOOKUP;
   status: LookupStatus;
-  body: {
+  body?: {
+    hostname: string;
     ip: string;
     port: number;
   }[];
@@ -130,10 +134,10 @@ export function validateResponse(res: Response): boolean {
 export function serializeResponse(res: Response): string {
   let result = '';
 
-  result += `re:${res.type} ${res.status}\r\n`;
+  result += `re:${res.type} ${res.status}`;
   
   if (res.headers) {
-    result += Object.entries(res.headers).map(([name, value]) => `${name}: ${value}`).join('\r\n');
+    result += Object.entries(res.headers).map(([name, value]) => `\r\n${name}: ${value}`).join('');
   }
 
   result += '\r\n\r\n';
@@ -146,17 +150,17 @@ export function serializeResponse(res: Response): string {
 export function deserializeResponse(res: string): Option<Response> {
   const lines = res.split('\r\n');
 
-  const statusLine = lines.shift()?.trim();
-  
+  let statusLine = lines.shift()?.trim();
   if (!statusLine?.slice(0, 3).match(/re:/i)) {
     return new None();
   }
+  statusLine = statusLine.slice(3);
 
-  if (statusLine?.split(/\s+/).length !== 2) {
+  if (statusLine?.trim().split(/\s+/).length !== 2) {
     return new None();
   }
 
-  const [type, status] = statusLine.split(/\s+/);
+  const [type, status] = statusLine.trim().split(/\s+/);
   if (Number.isNaN(Number.parseInt(status, 10))) {
     return new None();
   }

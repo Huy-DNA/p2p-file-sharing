@@ -55,11 +55,15 @@ export interface LookupRequest extends Request {
 
 export interface ConnectRequest extends Request {
   type: MessageType.CONNECT;
+  headers: {
+    'connect-token': string;
+  };
 }
 
 export interface SelectRequest extends Request {
   type: MessageType.SELECT;
   headers: {
+    'connect-token': string;
     token: string;
     hostname: string;
   };
@@ -72,6 +76,7 @@ export interface PingRequest extends Request {
 export interface PlsConnectRequest extends Request {
   type: MessageType.PLSCONNECT;
   headers: {
+    'connect-token': string;
     ip: string;
     port: number;
   };
@@ -84,10 +89,10 @@ export function validateRequest(req: Request): boolean {
 export function serializeRequest(req: Request): string {
   let result = '';
 
-  result += req.type + '\r\n';
+  result += req.type;
   
   if (req.headers) {
-    result += Object.entries(req.headers).map(([name, value]) => `${name}: ${value}`).join('\r\n');
+    result += Object.entries(req.headers).map(([name, value]) => `\r\n${name}: ${value}`).join('');
   }
 
   result += '\r\n\r\n';
