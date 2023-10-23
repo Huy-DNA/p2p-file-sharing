@@ -26,5 +26,7 @@
     "lint:fix": "eslint --fix .",
     "prepare": "husky install"
   },
-  "dependencies": {}
+  "dependencies": {
+    "joi": "^17.11.0"
+  }
 }
