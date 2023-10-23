@@ -142,7 +142,7 @@ export function serializeResponse(res: Response): string {
 
   result += '\r\n\r\n';
 
-  result += JSON.stringify(res.body);
+  result += typeof res.body === 'string' ? res.body : JSON.stringify(res.body);
 
   return result;
 }
