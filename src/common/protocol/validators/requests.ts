@@ -1,5 +1,5 @@
 import { None, Option, Some } from "../../option/option";
-import { Request, ConnectRequest, DiscoverRequest, FetchRequest, LoginRequest, PingRequest, PlsConnectRequest, PublishRequest, RegisterRequest, SelectRequest, LookupRequest } from "../requests";
+import { Request,  DiscoverRequest, FetchRequest, LoginRequest, PingRequest, PublishRequest, RegisterRequest,  LookupRequest } from "../requests";
 import Joi from "joi";
 
 const fetchSchema = Joi.object({
@@ -90,36 +90,6 @@ export function extractLookupRequest(req: Request): Option<LookupRequest> {
   return res.error ? new None() : new Some(res.value);
 }
 
-const connectSchema = Joi.object({
-  type: Joi.string().trim().regex(/connect/i).uppercase(),
-  headers: Joi.object({
-    'connect-token': Joi.string().trim().token(),
-  }).optional(),
-  body: Joi.string().trim().allow("").regex(/\s?/).optional(),
-});
-
-export function extractConnectRequest(req: Request): Option<ConnectRequest> {
-  const res = connectSchema.validate(req);
-
-  return res.error ? new None() : new Some(res.value);
-}
-
-const selectSchema = Joi.object({
-  type: Joi.string().trim().regex(/select/i).uppercase(),
-  headers: Joi.object({
-    'connect-token': Joi.string().trim().token(),
-    token: Joi.string().trim().token(),
-    hostname: Joi.string().trim().hostname(),
-  }),
-  body: Joi.string().trim().allow("").regex(/\s?/).optional(),
-});
-
-export function extractSelectRequest(req: Request): Option<SelectRequest> {
-  const res = selectSchema.validate(req);
-
-  return res.error ? new None() : new Some(res.value);
-}
-
 const pingSchema = Joi.object({
   type: Joi.string().trim().regex(/ping/i).uppercase(),
   headers: Joi.object().optional(),
@@ -128,22 +98,6 @@ const pingSchema = Joi.object({
 
 export function extractPingRequest(req: Request): Option<PingRequest> {
   const res = pingSchema.validate(req);
-
-  return res.error ? new None() : new Some(res.value);
-}
-
-const plsConnectSchema = Joi.object({
-  type: Joi.string().trim().regex(/plsconnect/i).uppercase(),
-  headers: Joi.object({
-    'connect-token': Joi.string().trim().token(),
-    ip: Joi.string().ip(),
-    port: Joi.number().port(),
-  }),
-  body: Joi.string().trim().allow("").regex(/\s?/).optional(),
-});
-
-export function extractPlsConnectRequest(req: Request): Option<PlsConnectRequest> {
-  const res = plsConnectSchema.validate(req);
 
   return res.error ? new None() : new Some(res.value);
 }

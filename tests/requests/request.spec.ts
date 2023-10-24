@@ -3,7 +3,7 @@ import path from 'path';
 import { Request, deserializeRequest, serializeRequest } from '../../src/common/protocol/requests';
 import { test, expect } from 'vitest';
 import { MessageType } from '../../src/common/protocol/types';
-import { extractConnectRequest, extractDiscoverRequest, extractFetchRequest, extractLoginRequest, extractLookupRequest, extractPingRequest, extractPlsConnectRequest, extractPublishRequest, extractRegisterRequest, extractSelectRequest } from '../../src/common/protocol/validators/requests';
+import { extractDiscoverRequest, extractFetchRequest, extractLoginRequest, extractLookupRequest, extractPingRequest, extractPublishRequest, extractRegisterRequest } from '../../src/common/protocol/validators/requests';
 
 test('request deserializer', () => {
   const inputDir = path.resolve(__dirname, 'input');
@@ -14,9 +14,6 @@ test('request deserializer', () => {
     const input = readTest(path.resolve(inputDir, testname));
     let output: Request | undefined = deserializeRequest(input).unwrap();
     switch (output.type) {
-      case MessageType.CONNECT:
-        output = extractConnectRequest(output).unwrap_or(undefined);
-        break;
       case MessageType.DISCOVER:
         output = extractDiscoverRequest(output).unwrap_or(undefined);
         break;
@@ -32,17 +29,11 @@ test('request deserializer', () => {
       case MessageType.PING:
         output = extractPingRequest(output).unwrap_or(undefined);
         break;
-      case MessageType.PLSCONNECT:
-        output = extractPlsConnectRequest(output).unwrap_or(undefined);
-        break;
       case MessageType.PUBLISH:
         output = extractPublishRequest(output).unwrap_or(undefined);
         break;
       case MessageType.REGISTER:
         output = extractRegisterRequest(output).unwrap_or(undefined);
-        break;
-      case MessageType.SELECT:
-        output = extractSelectRequest(output).unwrap_or(undefined);
         break;
     }
     expect(JSON.stringify(output, null, 2)).toMatchFileSnapshot(path.resolve(outputDir, testname));
@@ -58,9 +49,6 @@ test('request serializer', () => {
     const input = readTest(path.resolve(inputDir, testname));
     let output: Request | undefined = deserializeRequest(input).unwrap();
     switch (output.type) {
-      case MessageType.CONNECT:
-        output = extractConnectRequest(output).unwrap_or(undefined);
-        break;
       case MessageType.DISCOVER:
         output = extractDiscoverRequest(output).unwrap_or(undefined);
         break;
@@ -76,17 +64,11 @@ test('request serializer', () => {
       case MessageType.PING:
         output = extractPingRequest(output).unwrap_or(undefined);
         break;
-      case MessageType.PLSCONNECT:
-        output = extractPlsConnectRequest(output).unwrap_or(undefined);
-        break;
       case MessageType.PUBLISH:
         output = extractPublishRequest(output).unwrap_or(undefined);
         break;
       case MessageType.REGISTER:
         output = extractRegisterRequest(output).unwrap_or(undefined);
-        break;
-      case MessageType.SELECT:
-        output = extractSelectRequest(output).unwrap_or(undefined);
         break;
     }
     expect(output && serializeRequest(output)).toMatchFileSnapshot(path.resolve(outputDir, testname));

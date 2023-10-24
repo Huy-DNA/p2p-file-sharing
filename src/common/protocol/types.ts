@@ -5,8 +5,5 @@ export enum MessageType {
   LOGIN = "LOGIN",
   REGISTER = "REGISTER",
   LOOKUP = "LOOKUP",
-  CONNECT = "CONNECT",
-  SELECT = "SELECT",
   PING = "PING",
-  PLSCONNECT = "PLSCONNECT"
 }

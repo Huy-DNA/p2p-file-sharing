@@ -1,6 +1,6 @@
 import { None, Option, Some } from '../../option/option';
 import Joi from 'joi';
-import { Response, DiscoverResponse, FetchResponse, LoginResponse, PingResponse, PlsConnectResponse, PublishResponse, RegisterResponse, SelectResponse, LookupResponse, ConnectResponse } from '../response';
+import { Response, DiscoverResponse, FetchResponse, LoginResponse, PingResponse, PublishResponse, RegisterResponse, LookupResponse } from '../response';
 
 const fetchSchema = Joi.object({
   type: Joi.string().trim().regex(/fetch/i).uppercase(),
@@ -101,19 +101,6 @@ export function extractConnectResponse(re: Response): Option<ConnectResponse> {
   return res.error ? new None() : new Some(res.value);
 }
 
-const selectSchema = Joi.object({
-  type: Joi.string().trim().regex(/select/i).uppercase(),
-  status: Joi.number().integer().sign('positive'), 
-  headers: Joi.object().optional(),
-  body: Joi.string().trim().allow("").regex(/\s?/).optional(),
-});
-
-export function extractSelectResponse(re: Response): Option<SelectResponse> {
-  const res = selectSchema.validate(re);
-
-  return res.error ? new None() : new Some(res.value);
-}
-
 const pingSchema = Joi.object({
   type: Joi.string().trim().regex(/ping/i).uppercase(),
   status: Joi.number().integer().sign('positive'),
@@ -123,19 +110,6 @@ const pingSchema = Joi.object({
 
 export function extractPingResponse(re: Response): Option<PingResponse> {
   const res = pingSchema.validate(re);
-
-  return res.error ? new None() : new Some(res.value);
-}
-
-const plsConnectSchema = Joi.object({
-  type: Joi.string().trim().regex(/plsconnect/i).uppercase(),
-  status: Joi.number().integer().sign('positive'),
-  headers: Joi.object().optional(),
-  body: Joi.string().trim().allow("").regex(/\s?/).optional(),
-});
-
-export function extractPlsConnectResponse(re: Response): Option<PlsConnectResponse> {
-  const res = plsConnectSchema.validate(re);
 
   return res.error ? new None() : new Some(res.value);
 }

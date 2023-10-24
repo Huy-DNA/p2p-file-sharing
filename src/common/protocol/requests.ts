@@ -53,33 +53,8 @@ export interface LookupRequest extends Request {
   };
 }
 
-export interface ConnectRequest extends Request {
-  type: MessageType.CONNECT;
-  headers: {
-    'connect-token': string;
-  };
-}
-
-export interface SelectRequest extends Request {
-  type: MessageType.SELECT;
-  headers: {
-    'connect-token': string;
-    token: string;
-    hostname: string;
-  };
-}
-
 export interface PingRequest extends Request {
   type: MessageType.PING;
-}
-
-export interface PlsConnectRequest extends Request {
-  type: MessageType.PLSCONNECT;
-  headers: {
-    'connect-token': string;
-    ip: string;
-    port: number;
-  };
 }
 
 export function validateRequest(req: Request): boolean {

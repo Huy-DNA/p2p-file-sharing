@@ -86,27 +86,6 @@ export interface LookupResponse extends Response {
   }[];
 }
 
-export enum ConnectStatus {
-  OK = 200,
-  BAD_REQUEST = 400,
-}
-
-export interface ConnectResponse extends Response {
-  type: MessageType.CONNECT;
-  status: ConnectStatus,
-}
-
-export enum SelectStatus {
-  OK = 200,
-  TIMEOUT = 408,
-  BAD_REQUEST = 400,
-}
-
-export interface SelectResponse extends Response {
-  type: MessageType.SELECT;
-  status: SelectStatus;
-}
-
 export enum PingStatus {
   PONG = 200,
   BAD_REQUEST = 400,
@@ -115,16 +94,6 @@ export enum PingStatus {
 export interface PingResponse extends Response {
   type: MessageType.PING;
   status: PingStatus;
-}
-
-export enum PlsConnectStatus {
-  OK = 200,
-  BAD_REQUEST = 400,
-}
-
-export interface PlsConnectResponse extends Response {
-  type: MessageType.PLSCONNECT;
-  status: PlsConnectStatus;
 }
 
 export function validateResponse(res: Response): boolean {
