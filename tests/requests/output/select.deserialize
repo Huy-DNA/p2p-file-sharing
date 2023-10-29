@@ -1,9 +1,0 @@
-{
-  "type": "SELECT",
-  "headers": {
-    "connect-token": "12345bcace",
-    "hostname": "huydna.com",
-    "token": "123456789"
-  },
-  "body": ""
-}

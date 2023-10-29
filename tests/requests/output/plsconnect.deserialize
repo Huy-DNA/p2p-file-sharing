@@ -1,9 +1,0 @@
-{
-  "type": "PLSCONNECT",
-  "headers": {
-    "connect-token": "12345bcace",
-    "ip": "86.0.0.1",
-    "port": 12345
-  },
-  "body": ""
-}

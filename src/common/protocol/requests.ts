@@ -17,32 +17,14 @@ export interface FetchRequest extends Request {
 export interface PublishRequest extends Request {
   type: MessageType.PUBLISH;
   headers: {
-    token: string;
-  };
+    filename: string;
+  }
 }
 
 export interface DiscoverRequest extends Request {
   type: MessageType.DISCOVER;
   headers: {
     hostname: string;
-  };
-}
-
-export interface LoginRequest extends Request {
-  type: MessageType.LOGIN;
-  headers: {
-    name: string;
-    password: string;
-    ip: string;
-    port: number;
-  };
-}
-
-export interface RegisterRequest extends Request {
-  type: MessageType.REGISTER;
-  headers: {
-    name: string;
-    password: string;
   };
 }
 

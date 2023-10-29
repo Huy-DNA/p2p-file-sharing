@@ -1,5 +1,7 @@
 {
   "type": "PING",
-  "headers": {},
+  "headers": {
+    "hostname": "12.23.34.45"
+  },
   "body": ""
 }

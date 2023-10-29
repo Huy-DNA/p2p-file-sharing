@@ -52,25 +52,6 @@ export enum LoginStatus {
   BAD_REQUEST = 400,
 }
 
-export interface LoginResponse extends Response {
-  type: MessageType.LOGIN;
-  status: LoginStatus;
-  headers: {
-    token?: string;
-  }
-}
-
-export enum RegisterStatus {
-  OK = 200,
-  DUPLICATE_USERNAME = 409,
-  BAD_REQUEST = 400,
-}
-
-export interface RegisterResponse extends Response {
-  type: MessageType.REGISTER;
-  status: RegisterStatus;
-}
-
 export enum LookupStatus {
   OK = 200,
   NOT_FOUND = 404,
