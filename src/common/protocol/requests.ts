@@ -42,6 +42,10 @@ export interface PingRequest extends Request {
   };
 }
 
+export interface AnnounceRequest extends Request {
+  type: MessageType.ANNOUNCE;
+}
+
 export function validateRequest(req: Request): boolean {
   return req.headers === undefined || Object.values(req.headers).every((v) => typeof v === 'number' || typeof v === 'string' && v.indexOf(' ') === -1);
 }

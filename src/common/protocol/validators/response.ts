@@ -1,6 +1,6 @@
 import { None, Option, Some } from '../../option/option.js';
 import Joi from 'joi';
-import { Response, DiscoverResponse, FetchResponse,  PingResponse, PublishResponse,  LookupResponse } from '../response';
+import { Response, DiscoverResponse, FetchResponse,  PingResponse, PublishResponse,  LookupResponse, AnnounceResponse } from '../response';
 
 const fetchSchema = Joi.object({
   type: Joi.string().trim().regex(/fetch/i).uppercase(),
@@ -71,6 +71,19 @@ const pingSchema = Joi.object({
 
 export function extractPingResponse(re: Response): Option<PingResponse> {
   const res = pingSchema.validate(re);
+
+  return res.error ? new None() : new Some(res.value);
+}
+
+const announceSchema = Joi.object({
+  type: Joi.string().trim().regex(/announce/i).uppercase(),
+  status: Joi.number().integer().sign('positive'),
+  headers: Joi.object().optional(),
+  body: Joi.string().trim().allow("").regex(/\s?/).optional(),
+})
+
+export function extractAnnounceResponse(re: Response): Option<AnnounceResponse> {
+  const res = announceSchema.validate(re);
 
   return res.error ? new None() : new Some(res.value);
 }

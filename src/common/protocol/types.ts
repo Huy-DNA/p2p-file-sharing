@@ -4,5 +4,6 @@ export enum MessageType {
   DISCOVER = "DISCOVER",
   LOOKUP = "LOOKUP",
   PING = "PING",
+  ANNOUNCE = "ANNOUNCE",
   UNKNOWN = "UNKNOWN",
 }

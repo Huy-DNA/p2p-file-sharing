@@ -3,7 +3,7 @@ import path from 'path';
 import { Request, deserializeRequest, serializeRequest } from '../../src/common/protocol/requests';
 import { test, expect } from 'vitest';
 import { MessageType } from '../../src/common/protocol/types';
-import { extractDiscoverRequest, extractFetchRequest, extractLookupRequest, extractPingRequest, extractPublishRequest, } from '../../src/common/protocol/validators/requests';
+import { extractAnnounceRequest, extractDiscoverRequest, extractFetchRequest, extractLookupRequest, extractPingRequest, extractPublishRequest, } from '../../src/common/protocol/validators/requests';
 
 test('request deserializer', () => {
   const inputDir = path.resolve(__dirname, 'input');
@@ -28,6 +28,9 @@ test('request deserializer', () => {
         break;
       case MessageType.PUBLISH:
         output = extractPublishRequest(output).unwrap_or(undefined);
+        break;
+      case MessageType.ANNOUNCE:
+        output = extractAnnounceRequest(output).unwrap_or(undefined);
         break;
     }
     expect(JSON.stringify(output, null, 2)).toMatchFileSnapshot(path.resolve(outputDir, testname));
@@ -57,6 +60,9 @@ test('request serializer', () => {
         break;
       case MessageType.PUBLISH:
         output = extractPublishRequest(output).unwrap_or(undefined);
+        break;
+      case MessageType.ANNOUNCE:
+        output = extractAnnounceRequest(output).unwrap_or(undefined);
         break;
     }
     expect(output && serializeRequest(output)).toMatchFileSnapshot(path.resolve(outputDir, testname));

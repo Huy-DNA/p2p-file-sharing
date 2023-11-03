@@ -78,6 +78,16 @@ export interface PingResponse extends Response {
   status: PingStatus;
 }
 
+export enum AnnounceStatus {
+  OK = 200,
+  BAD_REQUEST = 400,
+}
+
+export interface AnnounceResponse extends Response {
+  type: MessageType.ANNOUNCE;
+  status: AnnounceStatus;
+}
+
 export interface UnknownResponse extends Response {
   type: MessageType.UNKNOWN;
   status: 200;
