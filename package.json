@@ -6,6 +6,7 @@
   "license": "MIT",
   "type": "module",
   "devDependencies": {
+    "@types/lodash": "^4.14.200",
     "@types/node": "^20.8.7",
     "@typescript-eslint/eslint-plugin": "^6.7.5",
     "@typescript-eslint/parser": "^6.7.5",
@@ -19,6 +20,7 @@
     "vitest": "^0.34.6"
   },
   "scripts": {
+    "start:server": "node ./build/src/server/index.js",
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest tests",
@@ -28,6 +30,7 @@
   },
   "dependencies": {
     "dotenv": "^16.3.1",
-    "joi": "^17.11.0"
+    "joi": "^17.11.0",
+    "lodash": "^4.17.21"
   }
 }
