@@ -78,6 +78,11 @@ export interface PingResponse extends Response {
   status: PingStatus;
 }
 
+export interface UnknownResponse extends Response {
+  type: MessageType.UNKNOWN;
+  status: 200;
+}
+
 export function validateResponse(res: Response): boolean {
   return res.headers === undefined || Object.values(res.headers).every((v) => typeof v === 'string' && v.indexOf(' ') === -1 || typeof v === 'number');
 }

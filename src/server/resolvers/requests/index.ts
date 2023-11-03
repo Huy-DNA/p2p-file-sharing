@@ -7,6 +7,7 @@ import { resolveFetchRequest } from './fetch/index.js';
 import { resolveLookupRequest } from './lookup/index.js';
 import { resolvePingRequest } from './ping/index.js';
 import { resolvePublishRequest } from './publish/index.js';
+import { UnknownResponse, serializeResponse } from 'common/protocol/response.js';
 
 export function resolveRequest(connection: net.Socket, message: string) {
   let request = deserializeRequest(message).unwrap_or(undefined);
@@ -41,5 +42,13 @@ export function resolveRequest(connection: net.Socket, message: string) {
         resolvePublishRequest(connection, request as PublishRequest);
       }
       break;
+  }
+
+  if (!request) { 
+    const unknownResponse: UnknownResponse = {
+      type: MessageType.UNKNOWN,
+      status: 200,
+    };
+    connection.write(serializeResponse(unknownResponse));
   }
 }
