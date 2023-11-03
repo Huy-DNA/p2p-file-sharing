@@ -16,7 +16,6 @@ export function resolveDiscoverRequest(connection: net.Socket, discoverRequest: 
   socket.write(serializeRequest(discoverRequest));
   let message = '';
   socket.on('data', (data) => {
-    console.log(data);
     const messages = data.toString().split('\r\n\r\n');
     message += messages[0];
     if (messages.length > 1) {
