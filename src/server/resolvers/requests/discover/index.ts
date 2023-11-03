@@ -19,7 +19,7 @@ export function resolveDiscoverRequest(connection: net.Socket, discoverRequest: 
     const messages = data.toString().split('\r\n\r\n');
     message += messages[0];
     if (messages.length > 1) {
-      connection.write(message);
+      connection.write(message + '\r\n\r\n');
       socket.end();
     }
   });
