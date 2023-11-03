@@ -70,6 +70,7 @@ export interface LookupResponse extends Response {
 export enum PingStatus {
   PONG = 200,
   BAD_REQUEST = 400,
+  HOST_NOT_FOUND = 404,
 }
 
 export interface PingResponse extends Response {

@@ -37,6 +37,9 @@ export interface LookupRequest extends Request {
 
 export interface PingRequest extends Request {
   type: MessageType.PING;
+  headers: {
+    hostname?: string;
+  };
 }
 
 export function validateRequest(req: Request): boolean {
