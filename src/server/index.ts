@@ -14,6 +14,7 @@ const server = net.createServer((connection) => {
     messages.forEach((mes) => resolveMessage(connection, mes + '\r\n\r\n'));
   });
   connection.on('end', () => console.log(` [-] Connection torndown with ${connection.remoteAddress}:${connection.remotePort}`));
+  connection.on('error', (e) => console.log(`  [#] Error with ${connection.remoteAddress}:${connection.remotePort} - ${e.message}`));
 });
 
 console.log(`Server listening on ${SERVER_PORT}...`);

@@ -1,7 +1,7 @@
 import net from 'net';
 import { DiscoverRequest, FetchRequest, LookupRequest, PingRequest, PublishRequest, deserializeRequest } from '../../../common/protocol/requests.js';
 import { MessageType } from '../../../common/protocol/types.js';
-import { extractDiscoverRequest, extractFetchRequest, extractLookupRequest, extractPingRequest, extractPublishRequest } from '../../../common/protocol/validators/request.js';
+import { extractDiscoverRequest, extractFetchRequest, extractLookupRequest, extractPingRequest, extractPublishRequest } from '../../../common/protocol/validators/requests.js';
 import { resolveDiscoverRequest } from './discover/index.js';
 import { resolveFetchRequest } from './fetch/index.js';
 import { resolveLookupRequest } from './lookup/index.js';

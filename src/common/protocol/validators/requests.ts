@@ -1,4 +1,4 @@
-import { None, Option, Some } from "../../option/option";
+import { None, Option, Some } from "../../option/option.js";
 import { Request,  DiscoverRequest, FetchRequest,PingRequest, PublishRequest, LookupRequest } from "../requests";
 import Joi from "joi";
 
