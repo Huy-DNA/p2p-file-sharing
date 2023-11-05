@@ -61,11 +61,7 @@ export enum LookupStatus {
 export interface LookupResponse extends Response {
   type: MessageType.LOOKUP;
   status: LookupStatus;
-  body?: {
-    hostname: string;
-    ip: string;
-    port: number;
-  }[];
+  body?: string[];
 }
 
 export enum PingStatus {

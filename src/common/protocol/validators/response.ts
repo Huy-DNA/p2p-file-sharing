@@ -47,13 +47,7 @@ const lookupSchema = Joi.object({
   type: Joi.string().trim().regex(/lookup/i).uppercase(),
   status: Joi.number().integer().sign('positive'), 
   headers: Joi.object().optional(),
-  body: Joi.array().items(
-    Joi.object({
-      hostname: Joi.string().trim().hostname(),
-      ip: Joi.string().trim().ip(),
-      port: Joi.number(),
-    }),
-  ).optional(),
+  body: Joi.array().items(Joi.string().trim().hostname()).optional(),
 });
 
 export function extractLookupResponse(re: Response): Option<LookupResponse> {
