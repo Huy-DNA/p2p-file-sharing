@@ -3,6 +3,9 @@ import { PingRequest } from '../../../../common/protocol/requests.js';
 import net from 'net';
 import { MessageType } from '../../../../common/protocol/types.js';
 import ping from '../../../utils/ping.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const { CLIENT_PORT } = process.env;
 
