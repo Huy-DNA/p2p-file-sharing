@@ -42,9 +42,7 @@ export enum DiscoverStatus {
 export interface DiscoverResponse extends Response {
   type: MessageType.DISCOVER;
   status: DiscoverStatus;
-  body?: {
-    hostnames: string[];
-  };
+  body?: string[];
 }
 
 export enum LoginStatus {

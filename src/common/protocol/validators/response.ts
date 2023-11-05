@@ -34,7 +34,7 @@ const discoverSchema = Joi.object({
   type: Joi.string().trim().regex(/discover/i).uppercase(),
   status: Joi.number().integer().sign('positive'),
   headers: Joi.object().optional(),
-  body: Joi.array().items(Joi.string().trim().hostname()).optional(),
+  body: Joi.array().items(Joi.string().trim().regex(/[^\s/\\:?*|]+/)).optional(),
 });
 
 export function extractDiscoverResponse(re: Response): Option<DiscoverResponse> {
