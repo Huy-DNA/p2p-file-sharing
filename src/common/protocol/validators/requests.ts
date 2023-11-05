@@ -18,7 +18,9 @@ export function extractFetchRequest(req: Request): Option<FetchRequest> {
 
 const publishSchema = Joi.object({
   type: Joi.string().trim().regex(/publish/i).uppercase(),
-  headers: Joi.object({}).optional(),
+  headers: Joi.object({
+    filename: Joi.string().trim().regex(/[^\s/\\:?*|]+/),
+  }).optional(),
   body: Joi.string().trim().allow("").regex(/\s?/).optional(),
 });
 

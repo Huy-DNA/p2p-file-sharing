@@ -7,7 +7,7 @@ import { resolveFetchRequest } from './fetch/index.js';
 import { resolveLookupRequest } from './lookup/index.js';
 import { resolvePingRequest } from './ping/index.js';
 import { resolvePublishRequest } from './publish/index.js';
-import { UnknownResponse, serializeResponse } from 'common/protocol/response.js';
+import { UnknownResponse, serializeResponse } from '../../../common/protocol/response.js';
 import { resolveAnnounceRequest } from './announce/index.js';
 
 export function resolveRequest(connection: net.Socket, message: string) {

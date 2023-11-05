@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { DiscoverRequest, serializeRequest } from '../../../../common/protocol/requests.js';
 import { DiscoverResponse, DiscoverStatus, serializeResponse } from '../../../../common/protocol/response.js';
 import { MessageType } from '../../../../common/protocol/types.js';
+import { MESSAGE_BOUNDARY } from '../../../../common/constants.js';
 
 dotenv.config();
 
@@ -16,10 +17,10 @@ export function resolveDiscoverRequest(connection: net.Socket, discoverRequest: 
   socket.write(serializeRequest(discoverRequest));
   let message = '';
   socket.on('data', (data) => {
-    const messages = data.toString().split('\r\n\r\n');
+    const messages = data.toString().split(MESSAGE_BOUNDARY);
     message += messages[0];
     if (messages.length > 1) {
-      connection.write(message + '\r\n\r\n');
+      connection.write(message + MESSAGE_BOUNDARY);
       socket.end();
     }
   });

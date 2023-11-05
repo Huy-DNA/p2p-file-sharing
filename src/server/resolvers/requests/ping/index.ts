@@ -2,6 +2,7 @@ import { PingResponse, PingStatus, serializeResponse } from '../../../../common/
 import { PingRequest, serializeRequest } from '../../../../common/protocol/requests.js';
 import net from 'net';
 import { MessageType } from '../../../../common/protocol/types.js';
+import { MESSAGE_BOUNDARY } from '../../../../common/constants.js';
 
 const { CLIENT_PORT } = process.env;
 
@@ -22,10 +23,10 @@ export function resolvePingRequest(connection: net.Socket, pingRequest: PingRequ
   socket.write(serializeRequest(pingRequest));
   let message = '';
   socket.on('data', (data) => {
-    const messages = data.toString().split('\r\n\r\n');
+    const messages = data.toString().split(MESSAGE_BOUNDARY);
     message += messages[0];
     if (messages.length > 1) {
-      connection.write(message + '\r\n\r\n');
+      connection.write(message + MESSAGE_BOUNDARY);
       socket.end();
     }
   });

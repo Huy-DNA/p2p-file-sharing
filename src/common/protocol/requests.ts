@@ -1,3 +1,4 @@
+import { HEADER_BODY_SEPARATOR, MESSAGE_BOUNDARY } from "../../common/constants.js";
 import { None, Option, Some } from "../option/option.js";
 import { MessageType } from "./types.js";
 
@@ -59,14 +60,22 @@ export function serializeRequest(req: Request): string {
     result += Object.entries(req.headers).map(([name, value]) => `\r\n${name}: ${value}`).join('');
   }
 
-  result += '\r\n\r\n';
+  result += HEADER_BODY_SEPARATOR;
 
   result += typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+
+  result += MESSAGE_BOUNDARY;
 
   return result;
 }
 
 export function deserializeRequest(req: string): Option<Request> {
+  if (!req.endsWith(MESSAGE_BOUNDARY)) {
+    return new None();
+  }
+
+  req = req.slice(0, req.length - MESSAGE_BOUNDARY.length);
+
   const lines = req.split('\r\n');
 
   const requestLine = lines.shift()?.trim().toUpperCase();

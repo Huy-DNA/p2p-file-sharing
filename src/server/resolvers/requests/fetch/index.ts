@@ -1,7 +1,7 @@
-import { FetchResponse, FetchStatus, serializeResponse } from 'common/protocol/response.js';
+import { FetchResponse, FetchStatus, serializeResponse } from '../../../../common/protocol/response.js';
 import { FetchRequest } from '../../../../common/protocol/requests.js';
 import net from 'net';
-import { MessageType } from 'common/protocol/types.js';
+import { MessageType } from '../../../../common/protocol/types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function resolveFetchRequest(connection: net.Socket, fetchRequest: FetchRequest) {
