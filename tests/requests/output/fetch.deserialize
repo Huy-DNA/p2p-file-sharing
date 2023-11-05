@@ -2,6 +2,5 @@
   "type": "FETCH",
   "headers": {
     "filename": "abc6-1234.doc"
-  },
-  "body": ""
+  }
 }

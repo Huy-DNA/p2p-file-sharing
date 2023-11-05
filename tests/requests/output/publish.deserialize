@@ -2,6 +2,5 @@
   "type": "PUBLISH",
   "headers": {
     "filename": "abc.xyz"
-  },
-  "body": ""
+  }
 }

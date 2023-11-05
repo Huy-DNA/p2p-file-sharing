@@ -114,7 +114,6 @@ export function serializeResponse(res: Response): string {
 
 export function deserializeResponse(res: string): Option<Response> {
   if (!res.endsWith(MESSAGE_BOUNDARY)) {
-    console.log(res);
     return new None();
   }
 
@@ -155,11 +154,14 @@ export function deserializeResponse(res: string): Option<Response> {
   }
 
   lines.shift();
-  const body = lines.join('\r\n');
-  try {
-    result.body = JSON.parse(body);
-  } catch (e) {
-    result.body = body;
+  const body = lines.join('\r\n') || undefined;
+
+  if (body !== undefined) {
+    try {
+      result.body = JSON.parse(body);
+    } catch (e) {
+      result.body = body;
+    }
   }
 
   return new Some(result);

@@ -99,11 +99,13 @@ export function deserializeRequest(req: string): Option<Request> {
   }
 
   lines.shift();
-  const body = lines.join('\r\n');
-  try {
-    result.body = JSON.parse(body);
-  } catch (e) {
-    result.body = body;
+  const body = lines.join('\r\n') || undefined;
+  if (body !== undefined) {
+    try {
+      result.body = JSON.parse(body);
+    } catch (e) {
+      result.body = body;
+    }
   }
 
   return new Some(result);

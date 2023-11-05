@@ -39,7 +39,7 @@ const discoverSchema = Joi.object({
 
 export function extractDiscoverResponse(re: Response): Option<DiscoverResponse> {
   const res = discoverSchema.validate(re);
-
+  console.log(res);
   return res.error ? new None() : new Some(res.value);
 }
 
