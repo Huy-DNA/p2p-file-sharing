@@ -2,7 +2,6 @@ export interface ClientRecord {
   hostname: string;
   files: {
     name: string;
-    checksum: number;
   }[];
 }
 
