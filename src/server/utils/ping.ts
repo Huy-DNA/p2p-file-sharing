@@ -21,7 +21,7 @@ export default async function ping(hostname: string, port: number): Promise<Ping
       message += messages[0];
       if (messages.length > 1) {
         socket.end();
-        const response = deserializeResponse(message).and_then(extractPingResponse).unwrap();
+        const response = deserializeResponse(message + MESSAGE_BOUNDARY).and_then(extractPingResponse).unwrap();
         resolve(response);
       }
     });
