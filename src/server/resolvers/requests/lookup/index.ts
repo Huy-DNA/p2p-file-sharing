@@ -1,5 +1,5 @@
 import net from 'net';
-import clientStore from 'server/stores/clients.js';
+import clientStore from '../../../stores/clients.js';
 import { LookupRequest } from '../../../../common/protocol/requests.js';
 import { MAX_LOOKUP_ENTRIES } from '../../../../common/constants.js';
 import { LookupResponse, LookupStatus, serializeResponse } from '../../../../common/protocol/response.js';
