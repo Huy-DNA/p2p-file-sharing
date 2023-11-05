@@ -21,6 +21,7 @@
   },
   "scripts": {
     "start:server": "node ./build/src/server/index.js",
+    "start:server-cli": "node ./build/src/server-cli/index.js",
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest tests",
