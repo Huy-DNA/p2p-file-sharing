@@ -103,7 +103,9 @@ export function serializeResponse(res: Response): string {
 
   result += HEADER_BODY_SEPARATOR;
 
-  result += typeof res.body === 'string' ? res.body : JSON.stringify(res.body);
+  if (res.body !== undefined) {
+    result += typeof res.body === 'string' ? res.body : JSON.stringify(res.body);
+  }
 
   result += MESSAGE_BOUNDARY;
 

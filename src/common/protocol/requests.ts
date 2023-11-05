@@ -62,7 +62,9 @@ export function serializeRequest(req: Request): string {
 
   result += HEADER_BODY_SEPARATOR;
 
-  result += typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+  if (req.body !== undefined) {
+    result += typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+  }
 
   result += MESSAGE_BOUNDARY;
 
