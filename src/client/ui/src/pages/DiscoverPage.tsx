@@ -46,7 +46,7 @@ export function DiscoverPage() {
     const TABLE_HEAD = ["File name", "Control"];
 
     const handleFetchButton = (fileName: string) => {
-      if (clientIpRef.current) fetchFile(clientIpRef.current?.value, fileName);
+      if (clientIpRef.current) fetchFile(fileName, clientIpRef.current?.value);
     };
 
     const handlePingButton = () => {
