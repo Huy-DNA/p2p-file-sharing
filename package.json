@@ -23,7 +23,7 @@
   "scripts": {
     "start:server": "node ./build/src/server/index.js",
     "start:server-cli": "node ./build/src/server-cli/index.js",
-    "start:client-ui": "cd src/client/ui && yarn dev",
+    "start:client-gui": "cd src/client/gui && yarn dev",
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest tests",
