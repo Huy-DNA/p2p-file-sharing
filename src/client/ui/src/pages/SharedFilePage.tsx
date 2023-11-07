@@ -124,15 +124,17 @@ export function SharedFilePage() {
               <tbody>
                 {publishedFile.map(({ fileName, filePath }, index) => (
                   <tr key={`${index}`} className="even:bg-blue-gray-50/50">
-                    <td className="p-3 flex justify-center">
-                      <div className="w-52">
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {fileName}
-                        </Typography>
+                    <td className="p-3">
+                      <div className="w-full flex justify-center">
+                        <div className="w-52">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {fileName}
+                          </Typography>
+                        </div>
                       </div>
                     </td>
                     <td className="p-3">

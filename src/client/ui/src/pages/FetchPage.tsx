@@ -91,15 +91,17 @@ export function GetFilePage() {
               <tbody>
                 {hostList.map((host, index) => (
                   <tr key={`${index}`} className="even:bg-blue-gray-50/50">
-                    <td className="p-3 flex justify-center">
-                      <div className="w-52">
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {host}
-                        </Typography>
+                    <td className="p-3">
+                      <div className="flex justify-center">
+                        <div className="w-52">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {host}
+                          </Typography>
+                        </div>
                       </div>
                     </td>
                     <td className="p-3">

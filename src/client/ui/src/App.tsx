@@ -1,6 +1,6 @@
 import { MENU_BAR } from "@constants";
 import { AppLayout } from "./layouts/AppLayout";
-import { GetFilePage, HomePage, SharedFilePage } from "@pages";
+import { DiscoverPage, GetFilePage, HomePage, SharedFilePage } from "@pages";
 
 function App() {
   return (
@@ -28,7 +28,7 @@ function App() {
           type: "item",
           path: "/discover",
           name: MENU_BAR.discover,
-          element: <SharedFilePage />,
+          element: <DiscoverPage />,
         },
       ]}
     />
