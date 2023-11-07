@@ -15,7 +15,7 @@ function App() {
         {
           type: "item",
           path: "/i",
-          name: MENU_BAR.getFile,
+          name: MENU_BAR.fetch,
           element: <GetFilePage />,
         },
         {
@@ -24,6 +24,13 @@ function App() {
           name: MENU_BAR.sharedFile,
           element: <SharedFilePage />,
         },
+        {
+          type: "item",
+          path: "/i",
+          name: MENU_BAR.discover,
+          element: <SharedFilePage />,
+        },
+        
       ]}
     />
   );

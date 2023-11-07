@@ -1,5 +1,6 @@
 export const MENU_BAR = {
   home: "Home",
-  getFile: "Get file",
+  fetch: "Fetch",
   sharedFile: "Shared file",
+  discover: "Discover",
 };
