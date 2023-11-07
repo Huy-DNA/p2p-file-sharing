@@ -14,23 +14,22 @@ function App() {
         },
         {
           type: "item",
-          path: "/i",
+          path: "/fetch",
           name: MENU_BAR.fetch,
           element: <GetFilePage />,
         },
         {
           type: "item",
-          path: "/i",
-          name: MENU_BAR.sharedFile,
+          path: "/shared",
+          name: MENU_BAR.publish,
           element: <SharedFilePage />,
         },
         {
           type: "item",
-          path: "/i",
+          path: "/discover",
           name: MENU_BAR.discover,
           element: <SharedFilePage />,
         },
-        
       ]}
     />
   );

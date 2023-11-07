@@ -48,7 +48,7 @@ export function GetFilePage() {
     );
   };
 
-  const HostList: Component<{ hostList: string[] }> = ({ hostList }) => {
+  const HostTable: Component<{ hostList: string[] }> = ({ hostList }) => {
     const TABLE_HEAD = ["IP", "Control"];
 
     const handleFetchButton = (clientIp: string) => {
@@ -108,12 +108,14 @@ export function GetFilePage() {
                           <Button
                             className="rounded-none capitalize w-20 py-2"
                             onClick={() => handleFetchButton(host)}
+                            variant="gradient"
                           >
                             Fetch
                           </Button>
                           <Button
                             className="rounded-none capitalize w-20 py-2"
                             onClick={() => handlePingButton(host)}
+                            variant="gradient"
                           >
                             Ping
                           </Button>
@@ -138,7 +140,7 @@ export function GetFilePage() {
         </Typography>
       </div>
       <FileNameInput />
-      <HostList hostList={hostList} />
+      <HostTable hostList={hostList} />
     </div>
   );
 }
