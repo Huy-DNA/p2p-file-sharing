@@ -24,6 +24,7 @@
     "start:server": "node ./build/src/server/index.js",
     "start:server-cli": "node ./build/src/server-cli/index.js",
     "start:client-gui": "cd src/client/gui && yarn dev",
+    "start:client-cli": "node ./build/src/client/cli/index.js",
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest tests",
