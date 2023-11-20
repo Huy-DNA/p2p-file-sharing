@@ -1,11 +1,14 @@
-import { HEADER_BODY_SEPARATOR, MESSAGE_BOUNDARY } from "../../common/constants.js";
+import {
+  HEADER_BODY_SEPARATOR,
+  MESSAGE_BOUNDARY,
+} from "../../common/constants.js";
 import { None, Option, Some } from "../option/option.js";
 import { MessageType } from "./types.js";
 
 export interface Response {
   type: MessageType;
   status: unknown;
-  headers?: { [index: string]: unknown; };
+  headers?: { [index: string]: unknown };
   body?: unknown;
 }
 
@@ -54,6 +57,7 @@ export enum LoginStatus {
 export enum LookupStatus {
   OK = 200,
   NOT_FOUND = 404,
+  BAD_REQUEST = 400,
 }
 
 export interface LookupResponse extends Response {
@@ -89,22 +93,32 @@ export interface UnknownResponse extends Response {
 }
 
 export function validateResponse(res: Response): boolean {
-  return res.headers === undefined || Object.values(res.headers).every((v) => typeof v === 'string' && v.indexOf(' ') === -1 || typeof v === 'number');
+  return (
+    res.headers === undefined ||
+    Object.values(res.headers).every(
+      (v) =>
+        (typeof v === "string" && v.indexOf(" ") === -1) ||
+        typeof v === "number"
+    )
+  );
 }
 
 export function serializeResponse(res: Response): string {
-  let result = '';
+  let result = "";
 
   result += `re:${res.type} ${res.status}`;
-  
+
   if (res.headers) {
-    result += Object.entries(res.headers).map(([name, value]) => `\r\n${name}: ${value}`).join('');
+    result += Object.entries(res.headers)
+      .map(([name, value]) => `\r\n${name}: ${value}`)
+      .join("");
   }
 
   result += HEADER_BODY_SEPARATOR;
 
   if (res.body !== undefined) {
-    result += typeof res.body === 'string' ? res.body : JSON.stringify(res.body);
+    result +=
+      typeof res.body === "string" ? res.body : JSON.stringify(res.body);
   }
 
   result += MESSAGE_BOUNDARY;
@@ -118,8 +132,8 @@ export function deserializeResponse(res: string): Option<Response> {
   }
 
   res = res.slice(0, res.length - MESSAGE_BOUNDARY.length);
-  
-  const lines = res.split('\r\n');
+
+  const lines = res.split("\r\n");
 
   let statusLine = lines.shift()?.trim();
   if (!statusLine?.slice(0, 3).match(/re:/i)) {
@@ -147,14 +161,14 @@ export function deserializeResponse(res: string): Option<Response> {
     body: undefined,
   };
 
-  while (lines.length > 0 && lines[0].trim() !== '') {
+  while (lines.length > 0 && lines[0].trim() !== "") {
     const headerLine = lines.shift()!.trim();
-    const [name, ...values] = headerLine.split(':');
-    result.headers![name.toLowerCase()] = values.join(':').trim();
+    const [name, ...values] = headerLine.split(":");
+    result.headers![name.toLowerCase()] = values.join(":").trim();
   }
 
   lines.shift();
-  const body = lines.join('\r\n') || undefined;
+  const body = lines.join("\r\n") || undefined;
 
   if (body !== undefined) {
     try {
