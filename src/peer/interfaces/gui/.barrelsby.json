@@ -1,0 +1,11 @@
+{
+  "directory": [
+    "./src/components/common",
+    "./src/constants",
+    "./src/hooks",
+    "./src/layouts",
+    "./src/pages",
+    "./src/states/common"
+  ],
+  "delete": true
+}

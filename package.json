@@ -21,11 +21,11 @@
     "vitest": "^0.34.6"
   },
   "scripts": {
-    "start:server": "node ./build/src/server/index.js",
-    "start:server-cli": "node ./build/src/server-cli/index.js",
-    "start:client-gui": "cd src/client/gui && yarn dev",
-    "start:client-cli": "node ./build/src/client/cli/index.js",
-    "build": "tsc -p tsconfig.json",
+    "start:master": "node ./build/src/master/index.js",
+    "start:master-cli": "node ./build/src/master-cli/index.js",
+    "start:peer-gui": "cd ./src/peer/interfaces/gui && yarn dev",
+    "start:peer-cli": "node ./build/src/peer/interfaces/cli/index.js",
+    "build": "tsc -p tsconfig.json && cd ./src/peer/interfaces/gui && yarn && yarn build",
     "test": "vitest run",
     "test:watch": "vitest tests",
     "lint": "eslint .",
