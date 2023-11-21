@@ -4,7 +4,7 @@ import { resolveMessage } from "./resolvers/index.js";
 import { MESSAGE_BOUNDARY } from "../../../common/constants.js";
 
 dotenv.config();
-const { CLIENT_PORT } = process.env;
+const { PEER_PORT } = process.env;
 
 const peer_server = net.createServer((connection) => {
   console.log(
@@ -30,5 +30,5 @@ const peer_server = net.createServer((connection) => {
   );
 });
 
-console.log(`Peer server listening on ${CLIENT_PORT}...`);
-peer_server.listen(CLIENT_PORT);
+console.log(`Peer server listening on ${PEER_PORT}...`);
+peer_server.listen(PEER_PORT);

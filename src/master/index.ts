@@ -6,7 +6,7 @@ import clientStore from './stores/clients.js';
 import unalive from './utils/unalive.js';
 
 dotenv.config();
-const { SERVER_PORT, CLIENT_PORT } = process.env;
+const { MASTER_PORT, PEER_PORT } = process.env;
 
 const server = net.createServer((connection) => {
   console.log(` [+] Connection established with ${connection.remoteAddress}:${connection.remotePort}`);
@@ -20,14 +20,14 @@ const server = net.createServer((connection) => {
   connection.on('error', (e) => console.log(`  [#] Error with ${connection.remoteAddress}:${connection.remotePort} - ${e.message}`));
 });
 
-console.log(`Server listening on ${SERVER_PORT}...`);
-server.listen(SERVER_PORT);
+console.log(`Server listening on ${MASTER_PORT}...`);
+server.listen(MASTER_PORT);
 
 setInterval(async () => {
   console.log(`[:] Server is scanning for unalive clients`);
   await Promise.all(
     Array.from(clientStore)
-         .map(([hostname]) => unalive(hostname, Number.parseInt(CLIENT_PORT!, 10))),
+         .map(([hostname]) => unalive(hostname, Number.parseInt(PEER_PORT!, 10))),
   );
 }, 60000);
 

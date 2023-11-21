@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const { CLIENT_PORT } = process.env;
+const { PEER_PORT } = process.env;
 
 export async function resolvePingRequest(connection: net.Socket, pingRequest: PingRequest) {
   let { headers: { hostname } } = pingRequest;
@@ -22,6 +22,6 @@ export async function resolvePingRequest(connection: net.Socket, pingRequest: Pi
 
   hostname = hostname.trim();
   
-  const response = await ping(hostname, parseInt(CLIENT_PORT!, 10));
+  const response = await ping(hostname, parseInt(PEER_PORT!, 10));
   connection.write(serializeResponse(response));
 }

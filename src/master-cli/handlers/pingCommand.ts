@@ -8,12 +8,12 @@ import { PingStatus, deserializeResponse } from '../../common/protocol/response.
 
 dotenv.config();
 
-const { SERVER_PORT, SERVER_HOSTNAME } = process.env;
+const { MASTER_PORT, MASTER_HOSTNAME } = process.env;
 
 export default async function handlePingCommand(hostname: string): Promise<string> {
   const connection = net.createConnection({
-    port: parseInt(SERVER_PORT!, 10),
-    host: SERVER_HOSTNAME!,
+    port: parseInt(MASTER_PORT!, 10),
+    host: MASTER_HOSTNAME!,
   },);
 
   const request: PingRequest = {
