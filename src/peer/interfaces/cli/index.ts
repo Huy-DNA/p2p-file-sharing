@@ -9,7 +9,8 @@ import handleDiscoverCommand from "./handlers/discoverCommand.js";
 import handlePublishCommand from "./handlers/publishCommand.js";
 import handleLookupCommand from "./handlers/lookupCommand.js";
 import handleFetchCommand from "./handlers/fetchCommand.js";
-import startPeerServer from "../../core/server/index.js";
+import startPeerServer from "../../core/server/peerServer.js";
+import Repository from "../../core/client/repository.js";
 
 dotenv.config();
 
@@ -20,7 +21,8 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-startPeerServer();
+const repository = new Repository();
+startPeerServer(repository);
 const masterConnection = connectServer();
 
 // eslint-disable-next-line no-constant-condition
@@ -39,7 +41,7 @@ while (true) {
             console.log(usages["ANNOUNCE"]);
             break;
           }
-          console.log(await handleAnnounceCommand(masterConnection));
+          console.log(await handleAnnounceCommand(masterConnection, repository));
           break;
         }
         case "FETCH": {
@@ -62,7 +64,7 @@ while (true) {
             break;
           }
 
-          console.log(await handleFetchCommand(masterConnection, filename, hostname));
+          console.log(await handleFetchCommand(masterConnection, repository, filename, hostname));
           break;
         }
         case "PUBLISH": {
@@ -71,7 +73,7 @@ while (true) {
             break;
           }
           const filepath = fragments[1];
-          console.log(await handlePublishCommand(masterConnection, filepath));
+          console.log(await handlePublishCommand(masterConnection, repository, filepath));
           break;
         }
         case "DISCOVER": {
@@ -85,7 +87,7 @@ while (true) {
             console.log(usages["DISCOVER"]);
             break;
           }
-          console.log(await handleDiscoverCommand(masterConnection, hostname));
+          console.log(await handleDiscoverCommand(masterConnection, repository, hostname));
           break;
         }
         case "LOOKUP": {
@@ -99,7 +101,7 @@ while (true) {
             console.log(usages["LOOKUP"]);
             break;
           }
-          console.log(await handleLookupCommand(masterConnection, filename)); 
+          console.log(await handleLookupCommand(masterConnection, repository, filename)); 
           break;
         }
         default:

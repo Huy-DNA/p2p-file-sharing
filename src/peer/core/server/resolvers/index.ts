@@ -27,44 +27,45 @@ import {
   serializeResponse,
 } from "../../../../common/protocol/response.js";
 import { resolveAnnounceRequest } from "./announce/index.js";
+import Repository from "../../../core/client/repository.js";
 
-export function resolveRequest(connection: net.Socket, message: string) {
+export function resolveRequest(connection: net.Socket, repository: Repository,message: string) {
   let request = deserializeRequest(message).unwrap_or(undefined);
   switch (request?.type) {
     case MessageType.DISCOVER:
       request = extractDiscoverRequest(request).unwrap_or(undefined);
       if (request) {
-        resolveDiscoverRequest(connection, request as DiscoverRequest);
+        resolveDiscoverRequest(connection, repository, request as DiscoverRequest);
       }
       break;
     case MessageType.FETCH:
       request = extractFetchRequest(request).unwrap_or(undefined);
       if (request) {
-        resolveFetchRequest(connection, request as FetchRequest);
+        resolveFetchRequest(connection, repository, request as FetchRequest);
       }
       break;
     case MessageType.LOOKUP:
       request = extractLookupRequest(request).unwrap_or(undefined);
       if (request) {
-        resolveLookupRequest(connection, request as LookupRequest);
+        resolveLookupRequest(connection, repository, request as LookupRequest);
       }
       break;
     case MessageType.PING:
       request = extractPingRequest(request).unwrap_or(undefined);
       if (request) {
-        resolvePingRequest(connection, request as PingRequest);
+        resolvePingRequest(connection, repository, request as PingRequest);
       }
       break;
     case MessageType.PUBLISH:
       request = extractPublishRequest(request).unwrap_or(undefined);
       if (request) {
-        resolvePublishRequest(connection, request as PublishRequest);
+        resolvePublishRequest(connection, repository, request as PublishRequest);
       }
       break;
     case MessageType.ANNOUNCE:
       request = extractAnnounceRequest(request).unwrap_or(undefined);
       if (request) {
-        resolveAnnounceRequest(connection, request as AnnounceRequest);
+        resolveAnnounceRequest(connection, repository, request as AnnounceRequest);
       }
       break;
   }

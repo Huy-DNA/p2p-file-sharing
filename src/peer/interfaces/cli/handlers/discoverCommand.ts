@@ -2,8 +2,10 @@ import net from 'net';
 import discover from '../../../core/client/requests/discover.js';
 import { DiscoverStatus } from '../../../../common/protocol/response.js';
 import formatArray from '../utils/formatArray.js';
+import Repository from '../../../../peer/core/client/repository.js';
 
-export default async function handleDiscoverCommand(connection: net.Socket, hostname: string): Promise<string> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default async function handleDiscoverCommand(connection: net.Socket, repository: Repository, hostname: string): Promise<string> {
   const response = await discover(connection, hostname);
   
   switch (response.status) {

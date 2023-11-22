@@ -3,8 +3,13 @@ import { LookupStatus, FetchStatus } from '../../../../common/protocol/response.
 import lookup from '../../../../peer/core/client/requests/lookup.js';
 import fetch from '../../../../peer/core/client/requests/fetch.js';
 import { connectPeer } from '../../../../peer/core/client/connection.js';
+import Repository from '../../../../peer/core/client/repository.js';
 
-export default async function handleFetchCommand(connection: net.Socket, filename: string, hostname: string | undefined): Promise<string> {
+export default async function handleFetchCommand(connection: net.Socket, repository: Repository, filename: string, hostname: string | undefined): Promise<string> {
+  if (await repository.has(filename)) {
+    return `OK (${FetchStatus.OK}): The file already exists`;
+  }
+  
   if (hostname) {
     const peerConnection = connectPeer(hostname);
     const response = await fetch(peerConnection, filename);
@@ -15,7 +20,6 @@ export default async function handleFetchCommand(connection: net.Socket, filenam
       case FetchStatus.FILE_NOT_FOUND:
         return `ERROR (${FetchStatus.FILE_NOT_FOUND}): Host ${hostname} does not have any file named ${filename}`;
       case FetchStatus.OK:
-        console.log(response.body);
         return `OK (${FetchStatus.OK}): Ok`;
     }
   } else {

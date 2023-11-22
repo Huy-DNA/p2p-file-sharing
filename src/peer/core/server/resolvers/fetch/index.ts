@@ -6,13 +6,13 @@ import {
 import { FetchRequest } from "../../../../../common/protocol/requests.js";
 import net from "net";
 import { MessageType } from "../../../../../common/protocol/types.js";
-import fs from "fs";
-import util from "util";
-
-const readFile = util.promisify(fs.readFile);
+import Repository from "../../../../core/client/repository.js";
+import { Base64 } from "js-base64";
 
 export async function resolveFetchRequest(
   connection: net.Socket,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  repository: Repository,
   fetchRequest: FetchRequest
 ) {
   let {
@@ -29,22 +29,13 @@ export async function resolveFetchRequest(
 
   filename = filename.trim();
 
-  try {
-    // Read the file
-    const fileContent = await readFile(filename, "base64");
+  const fileContent = (await repository.access(filename)).map(Base64.encode);
 
-    const response: FetchResponse = {
-      type: MessageType.FETCH,
-      status: FetchStatus.OK,
-      body: fileContent,
-    };
-    connection.write(serializeResponse(response));
-  } catch (error) {
-    console.error(`Error reading file ${filename}: `, error);
-    const response: FetchResponse = {
-      type: MessageType.FETCH,
-      status: FetchStatus.FILE_NOT_FOUND,
-    };
-    connection.write(serializeResponse(response));
-  }
+  const response: FetchResponse = {
+    type: MessageType.FETCH,
+    status: fileContent.isOk() ? FetchStatus.OK : FetchStatus.FILE_NOT_FOUND,
+    body: fileContent.unwrap_or(undefined),
+  };
+
+  connection.write(serializeResponse(response));
 }
