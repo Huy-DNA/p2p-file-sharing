@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import net from 'net';
-import { resolveMessage } from './resolvers/index.js';
+import { resolveRequest } from './resolvers/index.js';
 import { MESSAGE_BOUNDARY } from '../common/constants.js';
 import clientStore from './stores/clients.js';
 import unalive from './utils/unalive.js';
@@ -14,7 +14,7 @@ const server = net.createServer((connection) => {
   connection.on('data', (data) => {
     const messages = (message + data.toString()).split(MESSAGE_BOUNDARY);
     message = messages.pop()!;
-    messages.forEach((mes) => resolveMessage(connection, mes + MESSAGE_BOUNDARY));
+    messages.forEach((mes) => resolveRequest(connection, mes + MESSAGE_BOUNDARY));
   });
   connection.on('end', () => console.log(` [-] Connection torndown with ${connection.remoteAddress}:${connection.remotePort}`));
   connection.on('error', (e) => console.log(`  [#] Error with ${connection.remoteAddress}:${connection.remotePort} - ${e.message}`));

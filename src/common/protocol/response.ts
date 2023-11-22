@@ -26,7 +26,6 @@ export interface FetchResponse extends Response {
 
 export enum PublishStatus {
   OK = 200,
-  DUPLICATE_NAME = 409,
   BAD_REQUEST = 400,
 }
 
@@ -38,7 +37,6 @@ export interface PublishResponse extends Response {
 export enum DiscoverStatus {
   OK = 200,
   HOST_NOT_FOUND = 404,
-  HOST_DISCONNECTED = 410,
   BAD_REQUEST = 400,
 }
 
@@ -114,9 +112,8 @@ export function serializeResponse(res: Response): string {
       .join("");
   }
 
-  result += HEADER_BODY_SEPARATOR;
-
   if (res.body !== undefined) {
+    result += HEADER_BODY_SEPARATOR;
     result +=
       typeof res.body === "string" ? res.body : JSON.stringify(res.body);
   }

@@ -24,6 +24,10 @@ export class Some<T> {
     return new Some(callback(this.value));
   }
 
+  chain<S>(callback: (_: T) => Option<S>): Option<S> {
+    return callback(this.value);
+  }
+
   // eslint-disable-next-line class-methods-use-this
   isOk(): boolean {
     return true;
@@ -48,6 +52,11 @@ export class None<T> {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, class-methods-use-this
   map<S>(callback: (_: T) => S): Option<S> {
+    return new None();
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, class-methods-use-this
+  chain<S>(callback: (_: T) => Option<S>): Option<S> {
     return new None();
   }
 

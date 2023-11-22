@@ -3,7 +3,7 @@ export default {
     `Usage: ANNOUNCE\n` +
     `Description: Connect and register to alive client list.\n`,
   FETCH:
-    `Usage: FETCH filename hostname\n` +
+    `Usage: FETCH filename [hostname]\n` +
     `Description: Fetch a file from another user or device on the network.\n` +
     `  filename: the name of the file you want to retrieve.\n` +
     `  hostname: a valid hostname or IP address.`,
@@ -22,8 +22,4 @@ export default {
     `Description: Look up the availability of a file in other users or devices on the network.\n` +
     `  filename: the name of the file you want to search for.`,
 
-  PING:
-    `Usage: PING hostname\n` +
-    `Description: Check the connectivity to another user or device on the network.\n` +
-    `  hostname: a valid hostname or IP address.`,
 };

@@ -60,9 +60,8 @@ export function serializeRequest(req: Request): string {
     result += Object.entries(req.headers).map(([name, value]) => `\r\n${name}: ${value}`).join('');
   }
 
-  result += HEADER_BODY_SEPARATOR;
-
   if (req.body !== undefined) {
+    result += HEADER_BODY_SEPARATOR;
     result += typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
   }
 
