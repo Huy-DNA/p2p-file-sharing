@@ -8,6 +8,7 @@ import { None, Option, Some } from '../../../common/option/option.js';
 dotenv.config();
 
 const readFile = promisify(fs.readFile);
+const writeFile = promisify(fs.writeFile);
 const cpFile = promisify(fs.copyFile);
 const mkdir = promisify(fs.mkdir);
 const rm = promisify(fs.rm);
@@ -32,6 +33,12 @@ export default class Repository {
   async add(filename: string, pathname: string) {
     if (!await this.has(filename)) {
       await cpFile(pathname, path.resolve(Repository.dir, filename));
+    }
+  }
+
+  async addWithContent(filename: string, content: string) {
+    if (!await this.has(filename)) {
+      await writeFile(path.resolve(Repository.dir, filename), content);
     }
   }
 

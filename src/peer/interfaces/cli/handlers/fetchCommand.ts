@@ -4,6 +4,7 @@ import lookup from '../../../../peer/core/client/requests/lookup.js';
 import fetch from '../../../../peer/core/client/requests/fetch.js';
 import { connectPeer } from '../../../../peer/core/client/connection.js';
 import Repository from '../../../../peer/core/client/repository.js';
+import Base64 from 'js-base64';
 
 export default async function handleFetchCommand(connection: net.Socket, repository: Repository, filename: string, hostname: string | undefined): Promise<string> {
   if (await repository.has(filename)) {
@@ -20,6 +21,7 @@ export default async function handleFetchCommand(connection: net.Socket, reposit
       case FetchStatus.FILE_NOT_FOUND:
         return `ERROR (${FetchStatus.FILE_NOT_FOUND}): Host ${hostname} does not have any file named ${filename}`;
       case FetchStatus.OK:
+        await repository.addWithContent(filename, Base64.decode(response.body || ''))
         return `OK (${FetchStatus.OK}): Ok`;
     }
   } else {
@@ -48,6 +50,7 @@ export default async function handleFetchCommand(connection: net.Socket, reposit
       }
     }));
     
+    await repository.addWithContent(filename, Base64.decode(fileContent || ''))
     return fileContent === null ? `ERROR: Failed to fetch the file from any peers` : `OK (${FetchStatus.OK}): Ok`;
   }
 }
