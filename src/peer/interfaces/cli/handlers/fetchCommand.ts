@@ -4,7 +4,7 @@ import lookup from '../../../../peer/core/client/requests/lookup.js';
 import fetch from '../../../../peer/core/client/requests/fetch.js';
 import { connectPeer } from '../../../../peer/core/client/connection.js';
 import Repository from '../../../../peer/core/client/repository.js';
-import Base64 from 'js-base64';
+import { Base64 } from 'js-base64';
 
 export default async function handleFetchCommand(connection: net.Socket, repository: Repository, filename: string, hostname: string | undefined): Promise<string> {
   if (await repository.has(filename)) {
