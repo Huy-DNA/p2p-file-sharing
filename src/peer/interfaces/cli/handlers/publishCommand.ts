@@ -10,6 +10,11 @@ export default async function handlePublishCommand(connection: net.Socket, repos
     return `OK (${PublishStatus.OK}): The file is already published`;
   }
 
+  try {
+    await repository.add(path.basename(abspath), abspath);
+  } catch (e) {
+    return `ERROR: Failed while adding file to local repo`;
+  }
   const response = await publish(connection, path.basename(pathname));
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -17,11 +22,6 @@ export default async function handlePublishCommand(connection: net.Socket, repos
     case PublishStatus.BAD_REQUEST:
       return `ERROR (${PublishStatus.BAD_REQUEST}): Bad Request`;
     case PublishStatus.OK:
-      try {
-        await repository.add(path.basename(abspath), abspath);
-        return `OK (${PublishStatus.OK}): Published successfully`;
-      } catch {
-        return `ERROR: Failed while adding file to local repo`;
-      }
+      return `OK (${PublishStatus.OK}): Published successfully`;
   }
 }
