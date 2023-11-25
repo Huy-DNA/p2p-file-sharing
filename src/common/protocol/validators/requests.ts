@@ -6,6 +6,7 @@ const fetchSchema = Joi.object({
   type: Joi.string().trim().regex(/fetch/i).uppercase(),
   headers: Joi.object({
     filename: Joi.string().trim().regex(/[^\s/\\:?*|]+/),
+    hostname: Joi.string().trim().hostname(),
   }),
   body: Joi.string().trim().allow("").regex(/\s?/).optional(),
 });

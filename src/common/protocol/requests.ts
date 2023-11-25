@@ -12,6 +12,7 @@ export interface FetchRequest extends Request {
   type: MessageType.FETCH;
   headers: {
     filename: string;
+    hostname: string;
   };
 }
 
