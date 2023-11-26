@@ -7,7 +7,7 @@ import Repository from '../../../../repository.js';
 import dotenv from 'dotenv';
 import { Base64 } from 'js-base64';
 import { MessageType } from '../../../../../common/protocol/types.js';
-import { masterConnection } from 'peer/masterConnection.js';
+import { masterConnection } from '../../../../masterConnection.js';
 dotenv.config();
 
 const { PEER_PORT } = process.env;
