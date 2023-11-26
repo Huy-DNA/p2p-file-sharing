@@ -12,7 +12,7 @@ export interface FetchRequest extends Request {
   type: MessageType.FETCH;
   headers: {
     filename: string;
-    hostname: string;
+    hostname?: string;
   };
 }
 
@@ -20,6 +20,7 @@ export interface PublishRequest extends Request {
   type: MessageType.PUBLISH;
   headers: {
     filename: string;
+    abspath?: string; // Only meant to be used locally
   }
 }
 

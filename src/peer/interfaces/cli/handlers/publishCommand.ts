@@ -1,6 +1,5 @@
 import net from 'net';
 import { PublishStatus, deserializeResponse } from '../../../../common/protocol/response.js';
-import Repository from '../../../repository.js';
 import path from 'path';
 import { PublishRequest, serializeRequest } from '../../../../common/protocol/requests.js';
 import { MessageType } from '../../../../common/protocol/types.js';
@@ -9,22 +8,12 @@ import { extractPublishResponse } from '../../../../common/protocol/validators/r
 
 export default async function handlePublishCommand(interfaceConnection: net.Socket, pathname: string): Promise<string> {
   const abspath = path.resolve(pathname);
-  const repository = new Repository();
-
-  if (await repository.has(path.basename(abspath))) {
-    return `OK (${PublishStatus.OK}): The file is already published`;
-  }
-
-  try {
-    await repository.add(path.basename(abspath), abspath);
-  } catch (e) {
-    return `ERROR: Failed while adding file to local repo`;
-  }
 
   const request: PublishRequest = {
     type: MessageType.PUBLISH,
     headers: {
       filename: path.basename(abspath),
+      abspath,
     },
   };
 
@@ -39,5 +28,9 @@ export default async function handlePublishCommand(interfaceConnection: net.Sock
       return `ERROR (${PublishStatus.BAD_REQUEST}): Bad Request`;
     case PublishStatus.OK:
       return `OK (${PublishStatus.OK}): Published successfully`;
+    case PublishStatus.FILE_ALREADY_PUBLISHED:
+      return `OK (${PublishStatus.FILE_ALREADY_PUBLISHED}): The file with this name is already published`;
+    case PublishStatus.FILE_NOT_FOUND:
+      return `ERROR (${PublishStatus.FILE_NOT_FOUND}): The file cannot be found locally`;
   }
 }

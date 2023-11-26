@@ -1,22 +1,102 @@
-import { FetchRequest, serializeRequest } from '../../../../../common/protocol/requests.js';
-import { deserializeResponse, serializeResponse } from '../../../../../common/protocol/response.js';
-import { extractFetchResponse } from '../../../../../common/protocol/validators/response.js';
+import { FetchRequest, LookupRequest, serializeRequest } from '../../../../../common/protocol/requests.js';
+import { FetchResponse, FetchStatus, deserializeResponse, serializeResponse } from '../../../../../common/protocol/response.js';
+import { extractFetchResponse, extractLookupResponse } from '../../../../../common/protocol/validators/response.js';
 import net from 'net';
-import { connect } from '../../../../../common/connection.js';
+import { connect, getMessage } from '../../../../../common/connection.js';
+import Repository from '../../../../repository.js';
 import dotenv from 'dotenv';
+import { Base64 } from 'js-base64';
+import { MessageType } from '../../../../../common/protocol/types.js';
+import { masterConnection } from 'peer/masterConnection.js';
 dotenv.config();
 
 const { PEER_PORT } = process.env;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function resolveFetchRequest(interfaceConnection: net.Socket, request: FetchRequest) {
-  const peerConnection = connect(request.headers.hostname, Number.parseInt(PEER_PORT!));
-  peerConnection.write(serializeRequest(request));
+export async function resolveFetchRequest(interfaceConnection: net.Socket, request: FetchRequest) {
+  const {
+    filename,
+    hostname,
+  } = request.headers;
 
-  const listener = (message: string) => deserializeResponse(message)
-    .chain(extractFetchResponse)
-    .map(serializeResponse)
-    .map((mes) => interfaceConnection.write(mes))
-    .map(() => peerConnection.removeListener('message', listener));
-  peerConnection.on('message', listener);
+  const repository = new Repository();
+  if (await repository.has(filename)) {
+    const response: FetchResponse = {
+      type: MessageType.FETCH,
+      status: FetchStatus.FILE_ALREADY_EXIST,
+    }
+    interfaceConnection.write(serializeResponse(response));
+
+    return;
+  }
+
+  if (hostname) {
+    const peerConnection = connect(hostname, Number.parseInt(PEER_PORT!));
+    peerConnection.write(serializeRequest(request));
+
+    const listener = (message: string) => deserializeResponse(message)
+      .chain(extractFetchResponse)
+      .map((res) => {
+        if (res.status === FetchStatus.OK) {
+          repository.addWithContent(filename, Base64.decode(res.body || ''));
+        }
+        return res;
+      })
+      .map(serializeResponse)
+      .map((mes) => interfaceConnection.write(mes))
+      .map(() => peerConnection.removeListener('message', listener));
+    peerConnection.on('message', listener);
+  } else {
+    const lookupRequest: LookupRequest = {
+      type: MessageType.LOOKUP,
+      headers: {
+        filename,
+      }
+    }
+
+    masterConnection.write(serializeRequest(lookupRequest));
+    const { body: hostnames } = await getMessage(masterConnection, {
+      transform: (message) => deserializeResponse(message).chain(extractLookupResponse),
+    });
+    
+    const fileContent = hostnames?.length ? await Promise.race(hostnames.map(async (hostname) => {
+      const fetchRequest: FetchRequest = {
+        type: MessageType.FETCH,
+        headers: {
+          filename,
+          hostname,
+        },
+      };
+
+      interfaceConnection.write(serializeRequest(fetchRequest));
+
+      const fetchResponse = await getMessage(interfaceConnection, {
+        transform: (message) => deserializeResponse(message).chain(extractFetchResponse),
+      });
+
+      switch (fetchResponse.status) {
+        case FetchStatus.BAD_REQUEST:
+          return undefined;
+        case FetchStatus.FILE_NOT_FOUND:
+          return undefined;
+        case FetchStatus.OK:
+          return fetchResponse.body!;
+      }
+    })) : undefined;
+    
+    if (fileContent) {
+      await repository.addWithContent(filename, Base64.decode(fileContent || ''))
+      const response: FetchResponse = {
+        type: MessageType.FETCH,
+        status: FetchStatus.OK,
+      };
+      interfaceConnection.write(serializeResponse(response));
+    } else {
+      const response: FetchResponse = {
+        type: MessageType.FETCH,
+        status: FetchStatus.FILE_NOT_FOUND,
+      };
+      interfaceConnection.write(serializeResponse(response));
+    }
+  }
 }

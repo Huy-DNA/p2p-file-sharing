@@ -15,6 +15,7 @@ export interface Response {
 export enum FetchStatus {
   FILE_NOT_FOUND = 404,
   OK = 200,
+  FILE_ALREADY_EXIST = 304,
   BAD_REQUEST = 400,
 }
 
@@ -27,6 +28,8 @@ export interface FetchResponse extends Response {
 export enum PublishStatus {
   OK = 200,
   BAD_REQUEST = 400,
+  FILE_NOT_FOUND = 404,
+  FILE_ALREADY_PUBLISHED = 304,
 }
 
 export interface PublishResponse extends Response {
