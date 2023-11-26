@@ -16,6 +16,7 @@ export const startInterfaceServer = async function () {
         .on('data', (chunk) => bodyChunks.push(chunk))
         .on('end', () => resolve(Buffer.concat(bodyChunks).toString()))
     );
+    res.appendHeader('Access-Control-Allow-Origin', '*');
     resolveRequest(res, body);
   });
   interfaceServer.on('connection', (connection) => {

@@ -5,7 +5,8 @@
     "./src/hooks",
     "./src/layouts",
     "./src/pages",
-    "./src/states/common"
+    "./src/states/common",
+    "./src/utils"
   ],
   "delete": true
 }
