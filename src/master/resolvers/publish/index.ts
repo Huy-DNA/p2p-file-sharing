@@ -3,10 +3,11 @@ import { PublishResponse, PublishStatus, serializeResponse } from '../../../comm
 import { PublishRequest } from '../../../common/protocol/requests.js';
 import { MessageType } from '../../../common/protocol/types.js';
 import clientStore from '../../stores/clients.js';
+import { cleanupIp } from '../../../common/ip.js';
 
 export function resolvePublishRequest(connection: net.Socket, publishRequest: PublishRequest) {
   const { headers: { filename } } = publishRequest;
-  const ip = connection.remoteAddress;
+  const ip = connection.remoteAddress && cleanupIp(connection.remoteAddress);
 
   let response: PublishResponse | undefined;
   if (!ip || !clientStore.get(ip)) {

@@ -5,13 +5,16 @@ import * as dns from '../../../common/dns.js';
 import clientStore from '../../stores/clients.js';
 import { DiscoverResponse, DiscoverStatus, serializeResponse } from '../../../common/protocol/response.js';
 import { MessageType } from '../../../common/protocol/types.js';
+import { cleanupIp } from '../../../common/ip.js';
 
 export async function resolveDiscoverRequest(connection: net.Socket, discoverRequest: DiscoverRequest) {
   const { headers: { hostname } } = discoverRequest;
   let response: DiscoverResponse | undefined;
 
   try {
-    const ip = Joi.string().trim().ip().validate(hostname).error ? (await dns.lookup(hostname)).address : hostname;
+    const ip = cleanupIp(
+      Joi.string().trim().ip().validate(hostname).error ? (await dns.lookup(hostname)).address : hostname,
+    );
     const clientInfo = clientStore.get(ip);
     if (!clientInfo) {
       response = {
