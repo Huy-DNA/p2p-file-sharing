@@ -6,7 +6,7 @@ import {
 import { PingRequest } from "../../../../../common/protocol/requests.js";
 import net from "net";
 import { MessageType } from "../../../../../common/protocol/types.js";
-import Repository from "../../../../core/client/repository.js";
+import Repository from "../../../../repository.js";
 
 export async function resolvePingRequest(
   connection: net.Socket,

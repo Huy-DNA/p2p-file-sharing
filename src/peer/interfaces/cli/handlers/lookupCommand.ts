@@ -1,11 +1,24 @@
 import net from 'net';
-import { LookupStatus } from '../../../../common/protocol/response.js';
+import { LookupStatus, deserializeResponse } from '../../../../common/protocol/response.js';
 import formatArray from '../utils/formatArray.js';
-import lookup from '../../../core/client/requests/lookup.js';
-import Repository from '../../../../peer/core/client/repository.js';
+import { LookupRequest, serializeRequest } from '../../../../common/protocol/requests.js';
+import { MessageType } from '../../../../common/protocol/types.js';
+import { getMessage } from '../../../../common/connection.js';
+import { extractLookupResponse } from '../../../../common/protocol/validators/response.js';
 
-export default async function handleLookupCommand(connection: net.Socket, repository: Repository, filename: string): Promise<string> {
-  const response = await lookup(connection, filename);
+export default async function handleLookupCommand(interfaceConnection: net.Socket, filename: string): Promise<string> {
+  const request: LookupRequest = {
+      type: MessageType.LOOKUP,
+      headers: {
+        filename,
+      },
+    };
+
+  interfaceConnection.write(serializeRequest(request));
+
+  const response = await getMessage(interfaceConnection, {
+    transform: (message) => deserializeResponse(message).chain(extractLookupResponse),
+  });
   
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   switch (response.status) {

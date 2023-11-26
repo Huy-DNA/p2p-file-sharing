@@ -1,12 +1,25 @@
 import net from 'net';
-import discover from '../../../core/client/requests/discover.js';
-import { DiscoverStatus } from '../../../../common/protocol/response.js';
+import { DiscoverStatus, deserializeResponse } from '../../../../common/protocol/response.js';
 import formatArray from '../utils/formatArray.js';
-import Repository from '../../../../peer/core/client/repository.js';
+import { MessageType } from '../../../../common/protocol/types.js';
+import { DiscoverRequest, serializeRequest } from '../../../../common/protocol/requests.js';
+import { getMessage } from '../../../../common/connection.js';
+import { extractDiscoverResponse } from '../../../../common/protocol/validators/response.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default async function handleDiscoverCommand(connection: net.Socket, repository: Repository, hostname: string): Promise<string> {
-  const response = await discover(connection, hostname);
+export default async function handleDiscoverCommand(interfaceConnection: net.Socket, hostname: string): Promise<string> {
+  const request: DiscoverRequest = {
+    type: MessageType.DISCOVER,
+    headers: {
+      hostname,
+    }
+  }
+
+  interfaceConnection.write(serializeRequest(request));
+
+  const response = await getMessage(interfaceConnection, {
+    transform: (message) => deserializeResponse(message).chain(extractDiscoverResponse),
+  });
   
   switch (response.status) {
     case DiscoverStatus.BAD_REQUEST:

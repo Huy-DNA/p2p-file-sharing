@@ -3,7 +3,7 @@ import fs from 'fs';
 import { promisify } from 'util';
 import os from 'os';
 import dotenv from 'dotenv';
-import { None, Option, Some } from '../../../common/option/option.js';
+import { None, Option, Some } from '../common/option/option.js';
 
 dotenv.config();
 

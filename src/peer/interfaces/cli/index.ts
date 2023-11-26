@@ -3,27 +3,23 @@ import readline from "readline";
 import os from "os";
 import Joi from "joi";
 import usages from "./usages.js";
-import { connectServer } from "../../core/client/connection.js";
-import handleAnnounceCommand from "./handlers/announceCommand.js";
 import handleDiscoverCommand from "./handlers/discoverCommand.js";
 import handlePublishCommand from "./handlers/publishCommand.js";
 import handleLookupCommand from "./handlers/lookupCommand.js";
 import handleFetchCommand from "./handlers/fetchCommand.js";
-import startPeerServer from "../../core/server/peerServer.js";
-import Repository from "../../core/client/repository.js";
+import { connect } from "../../../common/connection.js";
 
 dotenv.config();
+const { PEER_INTERFACE_PORT, PEER_INTERFACE_HOSTNAME } = process.env;
 
-const HOSTNAME = os.hostname();
+const interfaceConnection = connect(PEER_INTERFACE_HOSTNAME!, Number.parseInt(PEER_INTERFACE_PORT!, 10));
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-const repository = new Repository();
-startPeerServer(repository);
-const masterConnection = connectServer();
+const HOSTNAME = os.hostname();
 
 // eslint-disable-next-line no-constant-condition
 while (true) {
@@ -36,14 +32,6 @@ while (true) {
       const fragments = command.trim().split(/\s+/);
 
       switch (fragments[0].toUpperCase()) {
-        case "ANNOUNCE": {
-          if (fragments.length !== 1) {
-            console.log(usages["ANNOUNCE"]);
-            break;
-          }
-          console.log(await handleAnnounceCommand(masterConnection, repository));
-          break;
-        }
         case "FETCH": {
           if (fragments.length !== 3 && fragments.length !== 2) {
             console.log(usages["FETCH"]);
@@ -64,7 +52,7 @@ while (true) {
             break;
           }
 
-          console.log(await handleFetchCommand(masterConnection, repository, filename, hostname));
+          console.log(await handleFetchCommand(interfaceConnection, filename, hostname));
           break;
         }
         case "PUBLISH": {
@@ -73,7 +61,7 @@ while (true) {
             break;
           }
           const filepath = fragments[1];
-          console.log(await handlePublishCommand(masterConnection, repository, filepath));
+          console.log(await handlePublishCommand(interfaceConnection, filepath));
           break;
         }
         case "DISCOVER": {
@@ -87,7 +75,7 @@ while (true) {
             console.log(usages["DISCOVER"]);
             break;
           }
-          console.log(await handleDiscoverCommand(masterConnection, repository, hostname));
+          console.log(await handleDiscoverCommand(interfaceConnection, hostname));
           break;
         }
         case "LOOKUP": {
@@ -101,12 +89,12 @@ while (true) {
             console.log(usages["LOOKUP"]);
             break;
           }
-          console.log(await handleLookupCommand(masterConnection, repository, filename)); 
+          console.log(await handleLookupCommand(interfaceConnection, filename)); 
           break;
         }
         default:
           console.log(
-            "Unknown command. Known commands: ANNOUNCE, FETCH, PUBLISH, DISCOVER, LOOKUP"
+            "Unknown command. Known commands: FETCH, PUBLISH, DISCOVER, LOOKUP"
           );
       }
       resolve(undefined);

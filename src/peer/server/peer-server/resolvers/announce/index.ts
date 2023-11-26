@@ -1,23 +1,23 @@
+import { AnnounceRequest } from "../../../../../common/protocol/requests.js";
 import net from "net";
-import { DiscoverRequest } from "../../../../../common/protocol/requests.js";
 import {
-  DiscoverResponse,
-  DiscoverStatus,
+  AnnounceResponse,
+  AnnounceStatus,
   serializeResponse,
 } from "../../../../../common/protocol/response.js";
 import { MessageType } from "../../../../../common/protocol/types.js";
-import Repository from "../../../../core/client/repository.js";
+import Repository from "../../../../repository.js";
 
-export async function resolveDiscoverRequest(
+export function resolveAnnounceRequest(
   connection: net.Socket,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   repository: Repository,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  discoverRequest: DiscoverRequest
+  announceRequest: AnnounceRequest,
 ) {
-  const response: DiscoverResponse = {
-    type: MessageType.DISCOVER,
-    status: DiscoverStatus.BAD_REQUEST,
+  const response: AnnounceResponse = {
+    type: MessageType.ANNOUNCE,
+    status: AnnounceStatus.BAD_REQUEST,
   };
   connection.write(serializeResponse(response));
 }

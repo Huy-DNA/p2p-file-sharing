@@ -1,7 +1,4 @@
 export default {
-  ANNOUNCE:
-    `Usage: ANNOUNCE\n` +
-    `Description: Connect and register to alive client list.\n`,
   FETCH:
     `Usage: FETCH filename [hostname]\n` +
     `Description: Fetch a file from another user or device on the network.\n` +

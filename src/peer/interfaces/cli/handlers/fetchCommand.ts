@@ -1,19 +1,32 @@
 import net from 'net';
-import { LookupStatus, FetchStatus } from '../../../../common/protocol/response.js';
-import lookup from '../../../../peer/core/client/requests/lookup.js';
-import fetch from '../../../../peer/core/client/requests/fetch.js';
-import { connectPeer } from '../../../../peer/core/client/connection.js';
-import Repository from '../../../../peer/core/client/repository.js';
+import { LookupStatus, FetchStatus, deserializeResponse } from '../../../../common/protocol/response.js';
+import Repository from '../../../repository.js';
 import { Base64 } from 'js-base64';
+import { FetchRequest, LookupRequest, serializeRequest } from '../../../../common/protocol/requests.js';
+import { MessageType } from '../../../../common/protocol/types.js';
+import { getMessage } from '../../../../common/connection.js';
+import { extractFetchResponse, extractLookupResponse } from '../../../../common/protocol/validators/response.js';
 
-export default async function handleFetchCommand(connection: net.Socket, repository: Repository, filename: string, hostname: string | undefined): Promise<string> {
+export default async function handleFetchCommand(interfaceConnection: net.Socket, filename: string, hostname: string | undefined): Promise<string> { 
+  const repository = new Repository();
   if (await repository.has(filename)) {
     return `OK (${FetchStatus.OK}): The file already exists`;
   }
-  
+
   if (hostname) {
-    const peerConnection = connectPeer(hostname);
-    const response = await fetch(peerConnection, filename);
+    const request: FetchRequest = {
+      type: MessageType.FETCH,
+      headers: {
+        filename,
+        hostname,
+      },
+    };
+
+    interfaceConnection.write(serializeRequest(request));
+
+    const response = await getMessage(interfaceConnection, {
+      transform: (message) => deserializeResponse(message).chain(extractFetchResponse),
+    });
 
     switch (response.status) {
       case FetchStatus.BAD_REQUEST:
@@ -25,32 +38,54 @@ export default async function handleFetchCommand(connection: net.Socket, reposit
         return `OK (${FetchStatus.OK}): Ok`;
     }
   } else {
-    const response = await lookup(connection, filename);
+    const lookupRequest: LookupRequest = {
+      type: MessageType.LOOKUP,
+      headers: {
+        filename,
+      },
+    };
 
-    switch (response.status) {
+    interfaceConnection.write(serializeRequest(lookupRequest));
+
+    const lookupResponse = await getMessage(interfaceConnection, {
+      transform: (message) => deserializeResponse(message).chain(extractLookupResponse),
+    });
+
+    switch (lookupResponse.status) {
       case LookupStatus.BAD_REQUEST:
         return `ERROR (${LookupStatus.BAD_REQUEST}): Lookup failed. Bad request`;
       case LookupStatus.NOT_FOUND:
         return `ERROR (${LookupStatus.NOT_FOUND}): File not found. Maybe it's your chance to take its name ;)`;
     }
 
-    const hostnames = response.body!;
-    
-    const fileContent = hostnames.length === 0 ? null : await Promise.race(hostnames.map(async (hostname) => {
-      const peerConnection = connectPeer(hostname);
-      const response = await fetch(peerConnection, filename);
+    const hostnames = lookupResponse.body!; 
 
-      switch (response.status) {
+    const fileContent = hostnames.length === 0 ? null : await Promise.race(hostnames.map(async (hostname) => {
+      const fetchRequest: FetchRequest = {
+        type: MessageType.FETCH,
+        headers: {
+          filename,
+          hostname,
+        },
+      };
+
+      interfaceConnection.write(serializeRequest(fetchRequest));
+
+      const fetchResponse = await getMessage(interfaceConnection, {
+        transform: (message) => deserializeResponse(message).chain(extractFetchResponse),
+      });
+
+      switch (fetchResponse.status) {
         case FetchStatus.BAD_REQUEST:
           return null;
         case FetchStatus.FILE_NOT_FOUND:
           return null;
         case FetchStatus.OK:
-          return response.body!;
+          return fetchResponse.body!;
       }
     }));
     
     await repository.addWithContent(filename, Base64.decode(fileContent || ''))
-    return fileContent === null ? `ERROR: Failed to fetch the file from any peers` : `OK (${FetchStatus.OK}): Ok`;
+    return fileContent === null ? `ERROR: Failed to fetch the file from any peers` : `OK (${FetchStatus.OK}): Fetched successfully`;
   }
 }

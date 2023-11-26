@@ -27,7 +27,7 @@ import {
   serializeResponse,
 } from "../../../../common/protocol/response.js";
 import { resolveAnnounceRequest } from "./announce/index.js";
-import Repository from "../../../core/client/repository.js";
+import Repository from "../../../repository.js";
 
 export function resolveRequest(connection: net.Socket, repository: Repository,message: string) {
   let request = deserializeRequest(message).unwrap_or(undefined);
