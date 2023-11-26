@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import readline from "readline";
 import os from "os";
 import Joi from "joi";
@@ -7,12 +6,6 @@ import handleDiscoverCommand from "./handlers/discoverCommand.js";
 import handlePublishCommand from "./handlers/publishCommand.js";
 import handleLookupCommand from "./handlers/lookupCommand.js";
 import handleFetchCommand from "./handlers/fetchCommand.js";
-import { connect } from "../../../common/connection.js";
-
-dotenv.config();
-const { PEER_INTERFACE_PORT, PEER_INTERFACE_HOSTNAME } = process.env;
-
-const interfaceConnection = connect(PEER_INTERFACE_HOSTNAME!, Number.parseInt(PEER_INTERFACE_PORT!, 10));
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -52,7 +45,7 @@ while (true) {
             break;
           }
 
-          console.log(await handleFetchCommand(interfaceConnection, filename, hostname));
+          console.log(await handleFetchCommand(filename, hostname));
           break;
         }
         case "PUBLISH": {
@@ -61,7 +54,7 @@ while (true) {
             break;
           }
           const filepath = fragments[1];
-          console.log(await handlePublishCommand(interfaceConnection, filepath));
+          console.log(await handlePublishCommand(filepath));
           break;
         }
         case "DISCOVER": {
@@ -75,7 +68,7 @@ while (true) {
             console.log(usages["DISCOVER"]);
             break;
           }
-          console.log(await handleDiscoverCommand(interfaceConnection, hostname));
+          console.log(await handleDiscoverCommand(hostname));
           break;
         }
         case "LOOKUP": {
@@ -89,7 +82,7 @@ while (true) {
             console.log(usages["LOOKUP"]);
             break;
           }
-          console.log(await handleLookupCommand(interfaceConnection, filename)); 
+          console.log(await handleLookupCommand(filename)); 
           break;
         }
         default:

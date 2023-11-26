@@ -6,12 +6,11 @@
   "license": "MIT",
   "type": "module",
   "devDependencies": {
-    "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.21",
     "@types/lodash": "^4.14.200",
     "@types/node": "^20.8.7",
     "@typescript-eslint/eslint-plugin": "^6.7.5",
     "@typescript-eslint/parser": "^6.7.5",
+    "concurrently": "^8.2.2",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.51.0",
     "husky": "^8.0.0",
@@ -25,8 +24,7 @@
   "scripts": {
     "start:master": "node ./build/src/master/index.js",
     "start:master-cli": "node ./build/src/master-cli/index.js",
-    "start:peer-server": "node ./build/src/peer/server/peer-server/index.js",
-    "start:peer-interface-server": "node ./build/src/peer/server/interface-server/index.js",
+    "start:peer": "concurrently \"node ./build/src/peer/server/peer-server/index.js\" \"node ./build/src/peer/server/interface-server/index.js\"",
     "start:peer-gui": "cd ./src/peer/interfaces/gui && yarn dev",
     "start:peer-cli": "node ./build/src/peer/interfaces/cli/index.js",
     "build": "tsc -p tsconfig.json && cd ./src/peer/interfaces/gui && yarn && yarn build",
@@ -37,9 +35,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "express": "^4.18.2",
     "ipaddr.js": "^2.1.0",
     "joi": "^17.11.0",
     "js-base64": "^3.7.5",

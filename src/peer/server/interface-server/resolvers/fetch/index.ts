@@ -1,7 +1,7 @@
 import { FetchRequest, LookupRequest, serializeRequest } from '../../../../../common/protocol/requests.js';
 import { FetchResponse, FetchStatus, deserializeResponse, serializeResponse } from '../../../../../common/protocol/response.js';
 import { extractFetchResponse, extractLookupResponse } from '../../../../../common/protocol/validators/response.js';
-import net from 'net';
+import http from 'http';
 import { connect, getMessage } from '../../../../../common/connection.js';
 import Repository from '../../../../repository.js';
 import dotenv from 'dotenv';
@@ -13,7 +13,7 @@ dotenv.config();
 const { PEER_PORT } = process.env;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function resolveFetchRequest(interfaceConnection: net.Socket, request: FetchRequest) {
+export async function resolveFetchRequest(interfaceConnection: http.ServerResponse, request: FetchRequest) {
   const {
     filename,
     hostname,
@@ -26,7 +26,7 @@ export async function resolveFetchRequest(interfaceConnection: net.Socket, reque
       status: FetchStatus.FILE_ALREADY_EXIST,
     }
     interfaceConnection.write(serializeResponse(response));
-
+    interfaceConnection.end();
     return;
   }
 
@@ -44,6 +44,7 @@ export async function resolveFetchRequest(interfaceConnection: net.Socket, reque
       })
       .map(serializeResponse)
       .map((mes) => interfaceConnection.write(mes))
+      .map(() => interfaceConnection.end())
       .map(() => peerConnection.removeListener('message', listener));
     peerConnection.on('message', listener);
   } else {
@@ -68,9 +69,11 @@ export async function resolveFetchRequest(interfaceConnection: net.Socket, reque
         },
       };
 
-      interfaceConnection.write(serializeRequest(fetchRequest));
+      const peerConnection = connect(hostname, Number.parseInt(PEER_PORT!));
 
-      const fetchResponse = await getMessage(interfaceConnection, {
+      peerConnection.write(serializeRequest(fetchRequest));
+
+      const fetchResponse = await getMessage(masterConnection, {
         transform: (message) => deserializeResponse(message).chain(extractFetchResponse),
       });
 
@@ -91,12 +94,14 @@ export async function resolveFetchRequest(interfaceConnection: net.Socket, reque
         status: FetchStatus.OK,
       };
       interfaceConnection.write(serializeResponse(response));
+      interfaceConnection.end();
     } else {
       const response: FetchResponse = {
         type: MessageType.FETCH,
         status: FetchStatus.FILE_NOT_FOUND,
       };
       interfaceConnection.write(serializeResponse(response));
+      interfaceConnection.end();
     }
   }
 }

@@ -1,13 +1,13 @@
 import { PublishRequest, serializeRequest } from '../../../../../common/protocol/requests.js';
 import { PublishResponse, PublishStatus, deserializeResponse, serializeResponse } from '../../../../../common/protocol/response.js';
 import { extractPublishResponse } from '../../../../../common/protocol/validators/response.js';
-import net from 'net';
+import http from 'http';
 import { masterConnection } from '../../../../masterConnection.js';
 import Repository from '../../../../repository.js';
 import { MessageType } from '../../../../../common/protocol/types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function resolvePublishRequest(interfaceConnection: net.Socket, request: PublishRequest) {
+export async function resolvePublishRequest(interfaceConnection: http.ServerResponse, request: PublishRequest) {
   const {
     filename,
     abspath
@@ -19,7 +19,7 @@ export async function resolvePublishRequest(interfaceConnection: net.Socket, req
       status: PublishStatus.BAD_REQUEST,
     };
     interfaceConnection.write(serializeResponse(response));
-    
+    interfaceConnection.end();
     return;
   }
 
@@ -31,7 +31,7 @@ export async function resolvePublishRequest(interfaceConnection: net.Socket, req
       status: PublishStatus.FILE_ALREADY_PUBLISHED,
     };
     interfaceConnection.write(serializeResponse(response));
-    
+    interfaceConnection.end();
     return;
   }
 
@@ -43,7 +43,7 @@ export async function resolvePublishRequest(interfaceConnection: net.Socket, req
       status: PublishStatus.FILE_NOT_FOUND,
     };
     interfaceConnection.write(serializeResponse(response));
-    
+    interfaceConnection.end();
     return;
   }
 
@@ -59,6 +59,7 @@ export async function resolvePublishRequest(interfaceConnection: net.Socket, req
     })
     .map(serializeResponse)
     .map((mes) => interfaceConnection.write(mes))
+    .map(() => interfaceConnection.end())
     .map(() => masterConnection.removeListener('message', listener));
   masterConnection.on('message', listener);
 }

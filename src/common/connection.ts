@@ -1,8 +1,25 @@
 import net from 'net';
+import http from 'http';
 import { MESSAGE_BOUNDARY } from './constants.js';
 import { Option } from './option/option.js';
 
 export type Connection = net.Socket;
+
+export async function httpPost(host: string, port: number, message: string): Promise<string> {
+  return new Promise((resolve) => {
+    const request = http.request({
+      hostname: host,
+      port,
+      method: 'POST',
+    }, (res) => {
+      const bodyChunks: Uint8Array[] = [];
+      res.on('data', (chunk) => bodyChunks.push(chunk))
+      res.on('end', () => resolve(Buffer.concat(bodyChunks).toString()));
+    });
+    request.write(message);
+    request.end();
+  });
+}
 
 export function connect(host: string, port: number): Connection {
   const connection = net.createConnection({
