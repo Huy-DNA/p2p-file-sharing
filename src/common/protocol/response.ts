@@ -111,6 +111,7 @@ export function serializeResponse(res: Response): string {
 
   if (res.headers) {
     result += Object.entries(res.headers)
+      .filter(([, value]) => value !== undefined)
       .map(([name, value]) => `\r\n${name}: ${value}`)
       .join("");
   }
