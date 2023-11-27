@@ -5,7 +5,6 @@ import http from 'http';
 import { connect, getMessage } from '../../../../../common/connection.js';
 import Repository from '../../../../repository.js';
 import dotenv from 'dotenv';
-import { Base64 } from 'js-base64';
 import { MessageType } from '../../../../../common/protocol/types.js';
 import { masterConnection } from '../../../../masterConnection.js';
 dotenv.config();
@@ -24,7 +23,7 @@ export async function resolveFetchRequest(interfaceConnection: http.ServerRespon
     const response: FetchResponse = {
       type: MessageType.FETCH,
       status: FetchStatus.FILE_ALREADY_EXIST,
-      body: (await repository.access(filename)).map(Base64.encode).unwrap_or(''),
+      body: (await repository.access(filename)).map(btoa).unwrap_or(''),
     }
     interfaceConnection.write(serializeResponse(response));
     interfaceConnection.end();
@@ -39,7 +38,7 @@ export async function resolveFetchRequest(interfaceConnection: http.ServerRespon
       .chain(extractFetchResponse)
       .map((res) => {
         if (res.status === FetchStatus.OK) {
-          repository.addWithContent(filename, Base64.decode(res.body || ''));
+          repository.addWithContent(filename, atob(res.body || ''));
         }
         return res;
       })
@@ -89,7 +88,7 @@ export async function resolveFetchRequest(interfaceConnection: http.ServerRespon
     })) : undefined;
     
     if (fileContent) {
-      await repository.addWithContent(filename, Base64.decode(fileContent || ''))
+      await repository.addWithContent(filename, atob(fileContent || ''))
       const response: FetchResponse = {
         type: MessageType.FETCH,
         status: FetchStatus.OK,

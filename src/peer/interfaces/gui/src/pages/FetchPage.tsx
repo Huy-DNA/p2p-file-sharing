@@ -5,7 +5,6 @@ import { deserializeResponse } from "../../../../../common/protocol/response";
 import { extractFetchResponse, extractLookupResponse } from "../../../../../common/protocol/validators/response";
 import { MessageType } from "../../../../../common/protocol/types";
 import { requestInterface } from "@utils";
-import { Base64 } from "js-base64";
 
 function FileNameInput({ filename, handleFilenameChange } : { 
   filename: string;
@@ -118,18 +117,10 @@ export function GetFilePage() {
 
     const rawResponse = await requestInterface(serializeRequest(fetchRequest));
     const response = deserializeResponse(rawResponse).chain(extractFetchResponse).unwrap_or(undefined);
-
-    const fileContent = Base64.decode(response?.body || '');
-
-    const blob = new Blob([fileContent], {
-      type: 'text/plain'
-    });
-    const blobUrl = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = blobUrl;
+    const a = document.createElement('a');
     a.download = filename;
+    a.href = `data:application/octet-stream;base64,${response?.body}`; 
     a.click();
-    URL.revokeObjectURL(blobUrl);
   }
 
   const handleFilenameChange: ChangeEventHandler<HTMLInputElement> = async (event) => {

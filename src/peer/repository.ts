@@ -39,7 +39,9 @@ export default class Repository {
 
   async addWithContent(filename: string, content: string) {
     if (!await this.has(filename)) {
-      await writeFile(path.resolve(Repository.dir, filename), content);
+      await writeFile(path.resolve(Repository.dir, filename), content, {
+        encoding: 'binary',
+      });
     }
   }
 
@@ -53,7 +55,7 @@ export default class Repository {
     }
 
     try {
-      return new Some(await readFile(path.resolve(Repository.dir, filename), 'utf-8'));
+      return new Some(await readFile(path.resolve(Repository.dir, filename), 'binary'));
     } catch {
       return new None();
     }

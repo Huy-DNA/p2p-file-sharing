@@ -7,7 +7,6 @@ import { FetchRequest } from "../../../../../common/protocol/requests.js";
 import net from "net";
 import { MessageType } from "../../../../../common/protocol/types.js";
 import Repository from "../../../../repository.js";
-import { Base64 } from "js-base64";
 
 export async function resolveFetchRequest(
   connection: net.Socket,
@@ -29,7 +28,7 @@ export async function resolveFetchRequest(
 
   filename = filename.trim();
 
-  const fileContent = (await repository.access(filename)).map(Base64.encode);
+  const fileContent = (await repository.access(filename)).map(btoa);
 
   const response: FetchResponse = {
     type: MessageType.FETCH,
