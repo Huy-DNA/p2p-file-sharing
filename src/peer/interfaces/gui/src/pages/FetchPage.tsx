@@ -1,19 +1,16 @@
 import { Button, Card, Input, Typography } from "@material-tailwind/react";
 import { ChangeEventHandler, useState } from "react";
-import { LookupRequest, serializeRequest } from "../../../../../common/protocol/requests";
+import { FetchRequest, LookupRequest, serializeRequest } from "../../../../../common/protocol/requests";
 import { deserializeResponse } from "../../../../../common/protocol/response";
-import { extractLookupResponse } from "../../../../../common/protocol/validators/response";
+import { extractFetchResponse, extractLookupResponse } from "../../../../../common/protocol/validators/response";
 import { MessageType } from "../../../../../common/protocol/types";
 import { requestInterface } from "@utils";
+import { Base64 } from "js-base64";
 
-function FileNameInput({ handleFilenameChange } : { handleFilenameChange: (newName: string) => void }) {
-  const [filename, setFilename] = useState('');
-
-  const handleChange: ChangeEventHandler<HTMLInputElement> = async (event) => {
-    setFilename(event.target.value);
-    handleFilenameChange(event.target.value);
-  };
-
+function FileNameInput({ filename, handleFilenameChange } : { 
+  filename: string;
+  handleFilenameChange: ChangeEventHandler<HTMLInputElement>;
+}) {
   return (
     <div className="w-full flex flex-row justify-center">
       <div className="w-[600px]">
@@ -24,14 +21,17 @@ function FileNameInput({ handleFilenameChange } : { handleFilenameChange: (newNa
           size="md"
           color="white"
           value={filename}
-          onChange={handleChange}
+          onChange={handleFilenameChange}
         />
       </div>
     </div>
   );
 }
 
-function HostTable ({ hostList }: { hostList: string }) {
+function HostTable ({ hostList, handleFetchButton } : {
+  hostList: string[];
+  handleFetchButton: (host: string) => void;
+}) {
   const TABLE_HEAD = ["IP", "Control"];
 
   return (
@@ -104,13 +104,41 @@ function HostTable ({ hostList }: { hostList: string }) {
 
 
 export function GetFilePage() {
+  const [filename, setFilename] = useState('');
   const [hostList, setHostList] = useState([] as string[]);
 
-  const handleFilenameChange = async (newName: string) => {
+  const handleFetch = async (filename: string, host: string) => {
+    const fetchRequest: FetchRequest = {
+      type: MessageType.FETCH,
+      headers: {
+        filename,
+        hostname: host,
+      },
+    };
+
+    const rawResponse = await requestInterface(serializeRequest(fetchRequest));
+    const response = deserializeResponse(rawResponse).chain(extractFetchResponse).unwrap_or(undefined);
+
+    const fileContent = Base64.decode(response?.body || '');
+
+    const blob = new Blob([fileContent], {
+      type: 'text/plain'
+    });
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(blobUrl);
+  }
+
+  const handleFilenameChange: ChangeEventHandler<HTMLInputElement> = async (event) => {
+    setFilename(event.target.value);
+
     const lookupRequest: LookupRequest = {
       type: MessageType.LOOKUP,
       headers: {
-        filename: newName,
+        filename: event.target.value,
       },
     }
 
@@ -128,8 +156,8 @@ export function GetFilePage() {
           Find all the hosts that have the file
         </Typography>
       </div>
-      <FileNameInput handleFilenameChange={handleFilenameChange} />
-      <HostTable hostList={hostList} />
+      <FileNameInput filename={filename} handleFilenameChange={handleFilenameChange} />
+      <HostTable hostList={hostList} handleFetchButton={(host: string) => handleFetch(filename, host)}/>
     </div>
   );
 }
