@@ -59,7 +59,6 @@ export async function resolveFetchRequest(interfaceConnection: http.ServerRespon
     const { body: hostnames } = await getMessage(masterConnection, {
       transform: (message) => deserializeResponse(message).chain(extractLookupResponse),
     });
-    
     const fileContent = hostnames?.length ? await Promise.race(hostnames.map(async (hostname) => {
       const fetchRequest: FetchRequest = {
         type: MessageType.FETCH,
@@ -73,7 +72,7 @@ export async function resolveFetchRequest(interfaceConnection: http.ServerRespon
 
       peerConnection.write(serializeRequest(fetchRequest));
 
-      const fetchResponse = await getMessage(masterConnection, {
+      const fetchResponse = await getMessage(peerConnection, {
         transform: (message) => deserializeResponse(message).chain(extractFetchResponse),
       });
 
