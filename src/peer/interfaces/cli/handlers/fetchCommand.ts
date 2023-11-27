@@ -20,7 +20,11 @@ export default async function handleFetchCommand(filename: string, hostname: str
     case FetchStatus.BAD_REQUEST:
       return `ERROR (${FetchStatus.BAD_REQUEST}): Bad Request`;
     case FetchStatus.FILE_NOT_FOUND:
-      return `ERROR (${FetchStatus.FILE_NOT_FOUND}): Host ${hostname} does not have any file named ${filename}`;
+      if (hostname) {
+        return `ERROR (${FetchStatus.FILE_NOT_FOUND}): Host ${hostname} does not have any file named ${filename}`;
+      } else {
+        return `ERROR (${FetchStatus.FILE_NOT_FOUND}): File not found`;
+      }
     case FetchStatus.OK:
       return `OK (${FetchStatus.OK}): Ok`;
     case FetchStatus.FILE_ALREADY_EXIST:
