@@ -59,7 +59,7 @@ export function serializeRequest(req: Request): string {
   result += req.type;
   
   if (req.headers) {
-    result += Object.entries(req.headers).map(([name, value]) => `\r\n${name}: ${value}`).join('');
+    result += Object.entries(req.headers).filter(([, value]) => value !== undefined).map(([name, value]) => `\r\n${name}: ${value}`).join('');
   }
 
   if (req.body !== undefined) {
