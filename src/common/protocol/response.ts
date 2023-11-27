@@ -48,12 +48,6 @@ export interface DiscoverResponse extends Response {
   body?: string[];
 }
 
-export enum LoginStatus {
-  OK = 200,
-  FAILED = 401,
-  BAD_REQUEST = 400,
-}
-
 export enum LookupStatus {
   OK = 200,
   NOT_FOUND = 404,
