@@ -29,7 +29,6 @@ export enum PublishStatus {
   OK = 200,
   BAD_REQUEST = 400,
   FILE_NOT_FOUND = 404,
-  FILE_ALREADY_PUBLISHED = 304,
 }
 
 export interface PublishResponse extends Response {

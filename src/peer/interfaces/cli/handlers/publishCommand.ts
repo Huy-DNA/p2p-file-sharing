@@ -24,8 +24,6 @@ export default async function handlePublishCommand(pathname: string): Promise<st
       return `ERROR (${PublishStatus.BAD_REQUEST}): Bad Request`;
     case PublishStatus.OK:
       return `OK (${PublishStatus.OK}): Published successfully`;
-    case PublishStatus.FILE_ALREADY_PUBLISHED:
-      return `OK (${PublishStatus.FILE_ALREADY_PUBLISHED}): The file with this name is already published`;
     case PublishStatus.FILE_NOT_FOUND:
       return `ERROR (${PublishStatus.FILE_NOT_FOUND}): The file cannot be found locally`;
     default:

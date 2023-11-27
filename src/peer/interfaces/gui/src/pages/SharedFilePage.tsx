@@ -58,7 +58,7 @@ function FilePathInput({ filepath, handleFilepathChange, handlePublishButton }: 
           >
             <span>Cancel</span>
           </Button>
-          <Button variant="gradient" color="white" onClick={handlePublishButton}>
+          <Button variant="gradient" color="white" onClick={() => { handlePublishButton(); handleOpen(); }}>
             <span>Publish</span>
           </Button>
         </DialogFooter>
@@ -74,10 +74,26 @@ function PublishedFilesTable({ publishedFiles } : { publishedFiles: string[] }) 
     console.log("delete", fileName);
   };
 
+  const handlePublishButton = async (filename: string) => {
+    const { VITE_PEER_REPO } = import.meta.env;
+    
+    const publishRequest: PublishRequest = {
+      type: MessageType.PUBLISH,
+      headers: {
+        filename,
+        abspath: `${VITE_PEER_REPO}\\${filename}`,
+      },
+    }
+
+    const rawResponse = await requestInterface(serializeRequest(publishRequest));
+    const response = deserializeResponse(rawResponse).chain(extractPublishResponse).unwrap_or(undefined);
+    console.log(response);
+  }
+
   return (
     <div className="w-full flex justify-center">
       {publishedFiles.length === 0 ? (
-        "No file have published"
+        "No file have been published"
       ) : (
         <Card className="h-full w-[75%] overflow-auto rounded-none">
           <table className="w-full min-w-max table-auto text-left">
@@ -131,6 +147,15 @@ function PublishedFilesTable({ publishedFiles } : { publishedFiles: string[] }) 
                         >
                           Delete
                         </Button>
+                        <Button
+                          className="rounded-none capitalize w-20 py-2"
+                          onClick={() =>
+                            handlePublishButton(file)
+                          }
+                          variant="gradient"
+                        >
+                          Publish 
+                        </Button>
                       </div>
                     </div>
                   </td>
@@ -156,7 +181,7 @@ export function SharedFilePage() {
     const publishRequest: PublishRequest = {
       type: MessageType.PUBLISH,
       headers: {
-        filename: _.last(filepath.split(/\\\//)) || '',
+        filename: _.last(filepath.split(/[\\/]/)) || '',
         abspath: filepath,
       },
     }

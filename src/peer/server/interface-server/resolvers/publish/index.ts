@@ -25,18 +25,11 @@ export async function resolvePublishRequest(interfaceConnection: http.ServerResp
 
   const repository = new Repository();
   
-  if (await repository.has(filename)) {
-    const response: PublishResponse = {
-      type: MessageType.PUBLISH,
-      status: PublishStatus.FILE_ALREADY_PUBLISHED,
-    };
-    interfaceConnection.write(serializeResponse(response));
-    interfaceConnection.end();
-    return;
-  }
 
   try {
-    await repository.add(filename, abspath);
+    if (!await repository.has(filename)) {
+      await repository.add(filename, abspath);
+    }
   } catch (e) {
     const response: PublishResponse = {
       type: MessageType.PUBLISH,
