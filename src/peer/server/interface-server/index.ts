@@ -7,6 +7,10 @@ const { PEER_INTERFACE_PORT } = process.env;
 
 export const startInterfaceServer = async function () {
   const interfaceServer = http.createServer(async (req, res) => {
+    console.log(` [+] Request sent from ${req.socket.remoteAddress}:${req.socket.remotePort}`);
+    req.on('close', () => console.log(` [-] Request finished on ${req.socket.remoteAddress}:${req.socket.remotePort}`));
+    req.on('error', (e) => console.log(`  [#] Error with ${req.socket.remoteAddress}:${req.socket.remotePort} - ${e.message}`));
+
     if (req.url !== '/') {
       return;
     }
@@ -18,11 +22,6 @@ export const startInterfaceServer = async function () {
     );
     res.appendHeader('Access-Control-Allow-Origin', '*');
     resolveRequest(res, body);
-  });
-  interfaceServer.on('connection', (connection) => {
-    console.log(` [+] Connection established with ${connection.remoteAddress}:${connection.remotePort}`);
-    connection.on('end', () => console.log(` [-] Connection torndown with ${connection.remoteAddress}:${connection.remotePort}`));
-    connection.on('error', (e) => console.log(`  [#] Error with ${connection.remoteAddress}:${connection.remotePort} - ${e.message}`));
   });
   console.log(`Peer interface server listening on ${PEER_INTERFACE_PORT}...`);
   interfaceServer.listen(Number.parseInt(PEER_INTERFACE_PORT!));
