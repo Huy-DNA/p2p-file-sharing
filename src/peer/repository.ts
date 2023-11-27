@@ -11,6 +11,7 @@ const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 const cpFile = promisify(fs.copyFile);
 const mkdir = promisify(fs.mkdir);
+const readdir = promisify(fs.readdir);
 const rm = promisify(fs.rm);
 const dirExist = promisify(fs.exists);
 
@@ -40,6 +41,10 @@ export default class Repository {
     if (!await this.has(filename)) {
       await writeFile(path.resolve(Repository.dir, filename), content);
     }
+  }
+
+  async getAll(): Promise<string[]> {
+    return readdir(Repository.dir);
   }
 
   async access(filename: string): Promise<Option<string>> {
