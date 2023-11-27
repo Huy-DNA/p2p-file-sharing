@@ -24,6 +24,7 @@ export async function resolveFetchRequest(interfaceConnection: http.ServerRespon
     const response: FetchResponse = {
       type: MessageType.FETCH,
       status: FetchStatus.FILE_ALREADY_EXIST,
+      body: (await repository.access(filename)).map(Base64.encode).unwrap_or(''),
     }
     interfaceConnection.write(serializeResponse(response));
     interfaceConnection.end();
