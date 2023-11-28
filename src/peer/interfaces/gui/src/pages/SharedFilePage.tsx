@@ -70,10 +70,6 @@ function FilePathInput({ filepath, handleFilepathChange, handlePublishButton }: 
 function PublishedFilesTable({ publishedFiles } : { publishedFiles: string[] }) {
   const TABLE_HEAD = ["File", "Control"];
 
-  const handleDeleteButton = (fileName: string) => {
-    console.log("delete", fileName);
-  };
-
   const handlePublishButton = async (filename: string) => {
     const { VITE_PEER_REPO } = import.meta.env;
     
@@ -138,15 +134,6 @@ function PublishedFilesTable({ publishedFiles } : { publishedFiles: string[] }) 
                   <td className="p-3">
                     <div className="flex justify-center">
                       <div className="w-52 flex justify-between">
-                        <Button
-                          className="rounded-none capitalize w-20 py-2"
-                          onClick={() =>
-                            handleDeleteButton(file)
-                          }
-                          variant="gradient"
-                        >
-                          Delete
-                        </Button>
                         <Button
                           className="rounded-none capitalize w-20 py-2"
                           onClick={() =>
