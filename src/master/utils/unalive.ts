@@ -5,7 +5,6 @@ export default async function unalive(hostname: string, port: number): Promise<b
   if (await isAlive(hostname, port)) {
     return false;
   }
-
   clientStore.delete(hostname);
   return true;
 }

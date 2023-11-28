@@ -16,10 +16,17 @@ export function resolveAnnounceRequest(connection: net.Socket, announceRequest: 
       status: AnnounceStatus.BAD_REQUEST,
     };
   } else {
-    clientStore.set(ip, {
-      hostname: ip,
-      files: new Set(),
-    });
+    const clientRecord = clientStore.get(ip);
+    if (!clientRecord) {
+      clientStore.set(ip, {
+        hostname: ip,
+        files: new Set(),
+        deathFlag: false,
+      });
+    } else {
+      clientRecord.files = new Set();
+      clientRecord.deathFlag = false;
+    }
     response = {
       type: MessageType.ANNOUNCE,
       status: AnnounceStatus.OK,
