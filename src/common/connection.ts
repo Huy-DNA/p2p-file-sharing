@@ -32,6 +32,9 @@ export function connect(host: string, port: number): Connection {
       message = messages.pop()!;
       messages.forEach((m) => connection.emit('message', m + MESSAGE_BOUNDARY));
     });
+    connection.on('error', () => {
+      console.log(`Error connecting to ${host}:${port}`);
+    })
   });
 
   return connection;
